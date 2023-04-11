@@ -1,4 +1,6 @@
-﻿using ChatApp.DAL.Data;
+﻿using AutoMapper;
+using ChatApp.BLL.Mapping;
+using ChatApp.DAL.Data;
 using ChatApp.DAL.Repositories.Interfaces;
 using ChatApp.DAL.Repositories.Realizations;
 using ChatApp.DAL.UnitOfWork;
@@ -15,6 +17,11 @@ namespace ChatApp.API.Extensions
         {
             services.AddDbContext<ChatAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies()));
+            });
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));

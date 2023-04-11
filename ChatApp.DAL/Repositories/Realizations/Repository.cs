@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ChatApp.DAL.Repositories.Realizations
 {
-    public abstract class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
