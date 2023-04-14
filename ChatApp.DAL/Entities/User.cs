@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable disable
+using Microsoft.AspNetCore.Identity;
+
 
 namespace ChatApp.DAL.Entities
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? Password { get; set; }
+        public string FirstName { get; set; }
+        //public string LastName { get; set; }
+        //public DateTime DateOfBirth { get; set; }
+        //public DateTime LastTimeActive { get; set; }
+        //public Role Role { get; set; }
+        //public ICollection<Chat> Chats { get; set; }
+        //public ICollection<User> Contacts { get; set; }
+        //public ICollection<User> BlockedUsers { get; set; }
     }
 }

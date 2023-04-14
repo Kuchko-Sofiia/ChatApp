@@ -14,19 +14,19 @@ namespace ChatApp.DAL.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly DbContext _context;
+        private readonly ChatAppDbContext _context;
         private readonly IServiceProvider _serviceProvider;
         private bool _disposed = false;
 
-        public UnitOfWork(DbContext context, IServiceProvider serviceProvider)
+        public UnitOfWork(ChatAppDbContext context, IServiceProvider serviceProvider)
         {
             _context = context;
             _serviceProvider = serviceProvider;
         }
 
-        public IRepository<T> GetRepository<T>() where T : class
+        public T GetRepository<T>() where T : class
         {
-            return _serviceProvider.GetService<IRepository<T>>()
+            return _serviceProvider.GetService<T>()
                 ?? throw new ArgumentException($"Repository for entity type {typeof(T)} not found");
         }
 

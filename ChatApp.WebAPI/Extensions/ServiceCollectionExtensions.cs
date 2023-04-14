@@ -1,13 +1,18 @@
-﻿using AutoMapper;
-using ChatApp.BLL.Mapping;
+﻿using ChatApp.BLL.Mapping;
+using ChatApp.BLL.Services.Interfaces;
+using ChatApp.BLL.Services;
 using ChatApp.DAL.Data;
 using ChatApp.DAL.Repositories.Interfaces;
 using ChatApp.DAL.Repositories.Realizations;
 using ChatApp.DAL.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using ChatApp.DAL.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
 
 namespace ChatApp.API.Extensions
 {
@@ -18,13 +23,50 @@ namespace ChatApp.API.Extensions
             services.AddDbContext<ChatAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddIdentity<User, IdentityRole>(opts =>
+            {
+                opts.User.RequireUniqueEmail = true;
+                opts.Password.RequiredLength = 8;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireDigit = false;
+            })
+                .AddEntityFrameworkStores<ChatAppDbContext>()
+                .AddDefaultTokenProviders();
+
+            //services.AddIdentityCore<User>()
+            //    .AddEntityFrameworkStores<ChatAppDbContext>()
+            //    .AddSignInManager<SignInManager<User>>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+
+                        ValidateAudience = true,
+                        ValidAudience = configuration["Jwt:Issuer"],
+
+                        ValidateLifetime = true,
+
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    };
+                });
+
             services.AddAutoMapper(config =>
             {
-                config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies()));
+                config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic).ToArray()));
             });
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            //Repositories & Unit of Work
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            //Servises
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IJwtTokenService, JwtTokenService>();
         }
 
         public static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
