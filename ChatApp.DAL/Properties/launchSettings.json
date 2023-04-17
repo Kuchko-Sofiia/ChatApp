@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "ChatApp.NUnitIntegrationTests": {
+    "ChatApp.DAL": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:50462;http://localhost:50463"
+      "applicationUrl": "https://localhost:65117;http://localhost:65118"
     }
   }
 }
