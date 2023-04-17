@@ -1,0 +1,23 @@
+﻿@using ChatApp.Blazor.Services.Interfaces;
+
+@page "/testpage"
+@inject ITestPageService TestPageService
+
+<h3>TestPage</h3>
+<hr>
+<p>Hello!</p>
+<p>Here is your response form API: @messageFromApi</p>
+
+
+@code {
+    private string? messageFromApi;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            messageFromApi = await TestPageService.GetMessageAsync();
+            StateHasChanged();
+        }
+    }
+}

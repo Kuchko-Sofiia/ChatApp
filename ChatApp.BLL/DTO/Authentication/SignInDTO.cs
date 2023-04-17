@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ChatApp.BLL.DTO.Authentication
 {
-    public class RegisterDTO : IMapWith<User>
+    public class SignInDTO : IMapWith<User>
     {
         public string? UserName { get; set; }
         public string? Email { get; set; }
@@ -18,7 +18,7 @@ namespace ChatApp.BLL.DTO.Authentication
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<RegisterDTO, User>()
+            profile.CreateMap<SignInDTO, User>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(user => user.UserName,
                     opt => opt.MapFrom(registerDto => registerDto.UserName))

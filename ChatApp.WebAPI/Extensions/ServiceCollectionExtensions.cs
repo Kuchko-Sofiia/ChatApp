@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.API.Extensions
 {
@@ -23,6 +24,28 @@ namespace ChatApp.API.Extensions
             services.AddDbContext<ChatAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+
+                        ValidateAudience = false,
+                        ValidAudience = configuration["Jwt:Audience"],
+
+                        ValidateLifetime = true,
+
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    };
+                });
+
+            services.AddAuthorization(options => options.DefaultPolicy =
+                new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser().Build());
+
             services.AddIdentity<User, IdentityRole>(opts =>
             {
                 opts.User.RequireUniqueEmail = true;
@@ -31,29 +54,13 @@ namespace ChatApp.API.Extensions
                 opts.Password.RequireDigit = false;
             })
                 .AddEntityFrameworkStores<ChatAppDbContext>()
+                //.AddUserManager<User>()
+                //.AddSignInManager<User>()
                 .AddDefaultTokenProviders();
 
             //services.AddIdentityCore<User>()
             //    .AddEntityFrameworkStores<ChatAppDbContext>()
             //    .AddSignInManager<SignInManager<User>>();
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = configuration["Jwt:Issuer"],
-
-                        ValidateAudience = true,
-                        ValidAudience = configuration["Jwt:Issuer"],
-
-                        ValidateLifetime = true,
-
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-                    };
-                });
 
             services.AddAutoMapper(config =>
             {
@@ -90,8 +97,29 @@ namespace ChatApp.API.Extensions
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyApi", Version = "v1" });
-
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "ChatApp", Version = "v1" });
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[]{ }
+                    }
+                });
                 opt.CustomSchemaIds(x => x.FullName);
             });
         }

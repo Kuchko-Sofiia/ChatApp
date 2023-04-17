@@ -2,8 +2,10 @@
 using ChatApp.DAL.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ChatApp.BLL.Services
@@ -11,67 +13,92 @@ namespace ChatApp.BLL.Services
     public class JwtTokenService : IJwtTokenService
     {
         private readonly IConfiguration _configuration;
+        private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler = new();
 
         public JwtTokenService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public string GenerateToken(Claim[] claims, DateTime? expires = null)
+        public JwtSecurityToken CreateJwtToken(User user)
         {
-            // create signing key
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Jwt:Key")));
-
-            // create token descriptor
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = _configuration.GetValue<string>("Jwt:Issuer"),
-                Audience = _configuration.GetValue<string>("Jwt:Audience"),
-                Expires = expires ?? DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpireMinutes")),
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
-                Subject = new ClaimsIdentity(claims)
-            };
-
-            // create token handler
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            // create token and return as string
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
+                claims: GetClaims(user),
+                expires: DateTime.UtcNow.AddMinutes(_configuration.GetSection("Jwt:Expire").Get<int>()),
+                signingCredentials: CreateSigningCredentials()
+            );
         }
 
-        public bool ValidateToken(string token, out JwtSecurityToken jwtToken)
+        public string CreateToken(User user)
         {
-            // create validation parameters
-            var validationParameters = new TokenValidationParameters
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                expires: DateTime.Now.AddMinutes(_configuration.GetSection("Jwt:TokenValidityInMinutes").Get<int>()),
+                claims: GetClaims(user),
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)), 
+                    SecurityAlgorithms.HmacSha256)
+            );
+
+            return _jwtSecurityTokenHandler.WriteToken(token);
+        }
+
+        public string CreateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        public List<Claim> GetClaims(User user)
+        {
+            var claims = new List<Claim>
             {
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Issuer"],
-
-                ValidateLifetime = true,
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, "User")
             };
 
-            // create token handler
-            var tokenHandler = new JwtSecurityTokenHandler();
+            return claims;
+        }
 
-            // validate token
-            try
+        public SigningCredentials CreateSigningCredentials()
+        {
+            return new SigningCredentials(
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
+                ),
+                SecurityAlgorithms.HmacSha256
+            );
+        }
+
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                tokenHandler.ValidateToken(token, validationParameters, out SecurityToken securityToken);
-                jwtToken = (JwtSecurityToken)securityToken;
-                return true;
-            }
-            catch
-            {
-                jwtToken = null;
-                return false;
-            }
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]!)),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
+        }
+        public DateTime GetRefreshTokenExpiryTime()
+        {
+            return DateTime.UtcNow.AddDays(_configuration.GetSection("Jwt:RefreshTokenValidityInDays").Get<int>());
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace ChatApp.Client.Data
+﻿namespace ChatApp.Blazor.Data
 {
     public class WeatherForecast
     {

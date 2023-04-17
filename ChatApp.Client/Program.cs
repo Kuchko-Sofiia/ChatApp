@@ -1,15 +1,16 @@
-using ChatApp.Client.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Blazored.LocalStorage;
+using ChatApp.Blazor.Services;
+using ChatApp.Blazor.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["AppBase"]) });
+builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddHttpClient();
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 

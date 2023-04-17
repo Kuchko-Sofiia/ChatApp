@@ -1,0 +1,31 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <p>Hello, @context.User.Identity.Name!</p>
+        </Authorized>
+        <NotAuthorized>
+            <p>Please,login.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+@code {
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private AuthenticationState authenticationState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    }
+}

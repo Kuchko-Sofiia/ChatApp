@@ -1,12 +1,6 @@
 ﻿using AutoMapper;
 using ChatApp.BLL.Mapping;
 using ChatApp.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatApp.BLL.DTO.Authentication
 {
@@ -21,7 +15,7 @@ namespace ChatApp.BLL.DTO.Authentication
                 .ForMember(user => user.Email,
                     opt => opt.MapFrom(loginDto => loginDto.Email))
                 .ForMember(user => user.PasswordHash,
-                    opt => opt.MapFrom(loginDto => loginDto.Password));
+                    opt => opt.MapFrom(loginDto => loginDto.Password)).ReverseMap();
         }
     }
 }

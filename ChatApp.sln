@@ -11,11 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.API", "ChatApp.WebA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.NUnitTests", "ChatApp.Tests\ChatApp.NUnitTests.csproj", "{71EED4A7-72E1-4320-822A-46311769B075}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.NUnitIntegrationTests", "ChatApp.NUnitIntegrationTests\ChatApp.NUnitIntegrationTests.csproj", "{391BA0CB-4CE7-48D9-80D1-E836AABE03D1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Client", "ChatApp.Client\ChatApp.Client.csproj", "{EEC997AD-31D3-4C96-A712-FB43ECA4767F}"
-EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ChatApp.DBP", "ChatApp.DBP\ChatApp.DBP.sqlproj", "{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Blazor", "ChatApp.Blazor\ChatApp.Blazor.csproj", "{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,20 +37,16 @@ Global
 		{71EED4A7-72E1-4320-822A-46311769B075}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71EED4A7-72E1-4320-822A-46311769B075}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71EED4A7-72E1-4320-822A-46311769B075}.Release|Any CPU.Build.0 = Release|Any CPU
-		{391BA0CB-4CE7-48D9-80D1-E836AABE03D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{391BA0CB-4CE7-48D9-80D1-E836AABE03D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{391BA0CB-4CE7-48D9-80D1-E836AABE03D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{391BA0CB-4CE7-48D9-80D1-E836AABE03D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEC997AD-31D3-4C96-A712-FB43ECA4767F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEC997AD-31D3-4C96-A712-FB43ECA4767F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEC997AD-31D3-4C96-A712-FB43ECA4767F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEC997AD-31D3-4C96-A712-FB43ECA4767F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E4CDBEDC-D4C0-48F1-BF1F-C9599FBC03DA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

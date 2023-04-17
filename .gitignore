@@ -364,3 +364,9 @@ FodyWeavers.xsd
 
 #VisualStudio
 .vs/
+
+.ChatApp.BlazorServer/
+
+
+/ChatApp.Blazor/ChatApp.Blazor.csproj
+/ChatApp.Blazor/Services/ChatAppHttpInterceptor.cs
