@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using ChatApp.Blazor.Services.Interfaces;
+﻿using ChatApp.Blazor.Services.Interfaces;
 using ChatApp.Blazor.Data;
 using Blazored.LocalStorage;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ChatApp.Blazor.Services
 {
@@ -26,9 +26,9 @@ namespace ChatApp.Blazor.Services
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                await _localStorageService.SetItemAsync("token", authResponse.Token);
-                await _localStorageService.SetItemAsync("refreshToken", authResponse.RefreshToken);
-                await _localStorageService.SetItemAsync("refreshTokenExpiryTime", authResponse.RefreshTokenExpiryTime);
+                await _localStorageService.SetItemAsync("token", authResponse?.Token);
+                await _localStorageService.SetItemAsync("refreshToken", authResponse?.RefreshToken);
+                await _localStorageService.SetItemAsync("refreshTokenExpiryTime", authResponse?.RefreshTokenExpiryTime);
             }
             else
             {
@@ -43,9 +43,11 @@ namespace ChatApp.Blazor.Services
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                await _localStorageService.SetItemAsync("token", authResponse.Token);
-                await _localStorageService.SetItemAsync("refreshToken", authResponse.RefreshToken);
-                await _localStorageService.SetItemAsync("refreshTokenExpiryTime", authResponse.RefreshTokenExpiryTime);
+                await _localStorageService.SetItemAsync("token", authResponse?.Token);
+                await _localStorageService.SetItemAsync("refreshToken", authResponse?.RefreshToken);
+                await _localStorageService.SetItemAsync("refreshTokenExpiryTime", authResponse?.RefreshTokenExpiryTime);
+
+                await ((CustomAuthenticationStateProvider)_authenticationStateProvider).AuthenticationStateChanged();
             }
             else
             {
@@ -65,6 +67,15 @@ namespace ChatApp.Blazor.Services
             {
                 // TODO: Handle error response
             }
+        }
+
+        public async Task Logout()
+        {
+            await _localStorageService.RemoveItemAsync("token");
+            await _localStorageService.RemoveItemAsync("refreshToken");
+            await _localStorageService.RemoveItemAsync("refreshTokenExpiryTime");
+
+            await ((CustomAuthenticationStateProvider)_authenticationStateProvider).AuthenticationStateChanged();
         }
     }
 }

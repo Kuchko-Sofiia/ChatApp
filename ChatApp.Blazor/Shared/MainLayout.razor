@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using ChatApp.Blazor.Services.Interfaces;
+
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IAccountService AccountService
 
 <PageTitle>ChatApp.Blazor</PageTitle>
 
@@ -9,15 +13,25 @@
 
     <main>
         <div class="top-row px-4">
-            <NavLink class="nav-link" href="login">
-                <a>Login</a>
-            </NavLink>
-            <NavLink class="nav-link" href="signin">
-                <a>Sign In</a>
-            </NavLink>
-            <NavLink class="nav-link" href="changepassword">
-                <a>Change Password</a>
-            </NavLink>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href="login">
+                        <a>Login</a>
+                    </NavLink>
+                    <NavLink class="nav-link" href="signin">
+                        <a>Sign In</a>
+                    </NavLink>
+                </NotAuthorized>
+                <Authorized>
+                    Hello, @context.User.Identity!.Name!
+                    <NavLink class="nav-link" href="changepassword">
+                        <a>Change Password</a>
+                    </NavLink>
+                    <NavLink class="nav-link" href="/">
+                        <button class="btn btn-danger" @onclick="Logout">Logout</button>
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -25,3 +39,12 @@
         </article>
     </main>
 </div>
+
+@code {
+
+    private async Task Logout()
+    {
+        await AccountService.Logout();
+        NavigationManager.NavigateTo("/");
+    }
+}

@@ -14,16 +14,14 @@ namespace ChatApp.API.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IMapper _mapper;
 
-        public AccountController(IJwtTokenService jwtTokenService, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(IJwtTokenService jwtTokenService, IMapper mapper, UserManager<User> userManager)
         {
             _jwtTokenService = jwtTokenService;
             _mapper = mapper;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         [AllowAnonymous]

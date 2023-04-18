@@ -10,13 +10,11 @@ namespace ChatApp.Blazor.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public TestPageService(HttpClient httpClient, ILocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider)
+        public TestPageService(HttpClient httpClient, ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;
-            _authenticationStateProvider = authenticationStateProvider;
         }
         public async Task<string> GetMessageAsync()
         {
