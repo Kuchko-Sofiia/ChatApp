@@ -1,24 +1,25 @@
 ﻿using Blazored.LocalStorage;
+using ChatApp.Blazor.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace ChatApp.Blazor.Services
+namespace ChatApp.Blazor.Helpers
 {
-    public class CustomAuthenticationStateProvider: AuthenticationStateProvider
+    public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly ILocalStorageService _localStorage;
+        private readonly ICustomLocalStorageService _localStorageService;
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorage)
+        public CustomAuthenticationStateProvider(ICustomLocalStorageService localStorage)
         {
-            _localStorage = localStorage;
+            _localStorageService = localStorage;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             try
             {
-                var token = await _localStorage.GetItemAsync<string>("token");
+                var token = await _localStorageService.GetJwtTokenAsync();
 
                 var identity = string.IsNullOrEmpty(token)
                     ? new ClaimsIdentity()
@@ -27,8 +28,6 @@ namespace ChatApp.Blazor.Services
 
                 var user = new ClaimsPrincipal(identity);
                 var state = new AuthenticationState(user);
-
-                //NotifyAuthenticationStateChanged(Task.FromResult(state));
 
                 return state;
             }
@@ -53,7 +52,6 @@ namespace ChatApp.Blazor.Services
 
             var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
 
-            // Add the Name claim
             var name = claims.GetValueOrDefault("name");
             if (!string.IsNullOrEmpty(name))
             {

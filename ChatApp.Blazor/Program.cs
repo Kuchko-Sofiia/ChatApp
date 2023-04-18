@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using ChatApp.Blazor.Data;
+using ChatApp.Blazor.Helpers;
 using ChatApp.Blazor.Services;
 using ChatApp.Blazor.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,6 +17,8 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<ICustomLocalStorageService, CustomLocalStorageService>();
+
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<ITestPageService, TestPageService>();
 
