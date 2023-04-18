@@ -12,21 +12,21 @@ namespace ChatApp.Blazor.Services
     public class AccountService : IAccountService
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
+        private readonly string _baseUrl;
         private readonly ICustomLocalStorageService _localStorageService;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
         public AccountService(HttpClient httpClient, ICustomLocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _configuration = configuration;
+            _baseUrl = configuration["AppBase"];
             _localStorageService = localStorageService;
             _authenticationStateProvider = authenticationStateProvider;
         }
 
         public async Task SignIn(SignInDTO signInDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(_configuration["AppBase"] + "account/signin", signInDto);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}account/signin", signInDto);
             if (response.IsSuccessStatusCode)
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -41,7 +41,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task Login(LoginDTO loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(_configuration["AppBase"] + "account/login", loginDto);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}account/login", loginDto);
             if (response.IsSuccessStatusCode)
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -58,7 +58,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task ChangePassword(ChangePasswordDTO changePasswordDto)
         {
-            var response = await _httpClient.PostAsJsonAsync(_configuration["AppBase"] + "account/changepassword", changePasswordDto);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}account/changepassword", changePasswordDto);
 
             if (response.IsSuccessStatusCode)
             {
@@ -74,7 +74,6 @@ namespace ChatApp.Blazor.Services
         public async Task Logout()
         {
             await _localStorageService.RemoveJwtTokenInfoAsync();
-
             await ((CustomAuthenticationStateProvider)_authenticationStateProvider).AuthenticationStateChanged();
         }
     }
