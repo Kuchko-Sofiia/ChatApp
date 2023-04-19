@@ -1,0 +1,33 @@
+﻿@page "/allusers"
+@using ChatApp.Blazor.Data;
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@loginDto" TItem="LoginDTO" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="LoginDTO" Title="UserEmail" Property="Email" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="LoginDTO" Title="Password" Property="Password" Filterable="true" Frozen="true" Sortable="false" Width="80px" TextAlign="TextAlign.Center" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    IEnumerable<LoginDTO> loginDto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        loginDto = new List<LoginDTO>()
+        {
+            new LoginDTO()
+            {
+                Email = "MyEmail",
+                Password = "MyPassword"
+            },
+            new LoginDTO()
+            {
+                Email = "MyEmail2",
+                Password = "MyPassword2"
+            },
+        };
+    }
+}
