@@ -3,8 +3,6 @@ using ChatApp.Blazor.Data;
 using ChatApp.Blazor.Helpers;
 using ChatApp.Blazor.Services;
 using ChatApp.Blazor.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<IWrappedHttpClient, WrappedHttpClient>();
 
 builder.Services.AddSingleton<WeatherForecastService>();
 
