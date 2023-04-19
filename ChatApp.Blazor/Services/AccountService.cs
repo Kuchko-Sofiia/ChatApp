@@ -31,7 +31,8 @@ namespace ChatApp.Blazor.Services
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                await _localStorageService.SetJwtTokenInfoAsync(authResponse);
+                if(authResponse != null)
+                    await _localStorageService.SetJwtTokenInfoAsync(authResponse);
             }
             else
             {
@@ -46,7 +47,8 @@ namespace ChatApp.Blazor.Services
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                await _localStorageService.SetJwtTokenInfoAsync(authResponse);
+                if(authResponse != null)
+                    await _localStorageService.SetJwtTokenInfoAsync(authResponse);
 
                 await ((CustomAuthenticationStateProvider)_authenticationStateProvider).AuthenticationStateChanged();
             }

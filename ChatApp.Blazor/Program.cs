@@ -20,6 +20,7 @@ builder.Services.AddScoped<ICustomLocalStorageService, CustomLocalStorageService
 
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<ITestPageService, TestPageService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddHttpContextAccessor();
 

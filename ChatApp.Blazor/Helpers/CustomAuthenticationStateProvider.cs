@@ -37,7 +37,7 @@ namespace ChatApp.Blazor.Helpers
             }
         }
 
-        public async Task AuthenticationStateChanged()
+        public new async Task AuthenticationStateChanged()
         {
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
@@ -45,9 +45,8 @@ namespace ChatApp.Blazor.Helpers
         public static Dictionary<string, string>? GetClaimsFromToken(string token)
         {
             var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
-            if (jwtToken == null)
+            if (handler.ReadToken(token) is not JwtSecurityToken jwtToken)
                 return null;
 
             var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);

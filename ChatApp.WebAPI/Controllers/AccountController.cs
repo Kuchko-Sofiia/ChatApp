@@ -170,11 +170,9 @@ namespace ChatApp.API.Controllers
 
         [Authorize]
         [HttpGet("test")]
-        public async Task<IActionResult> TestAction()
+        public IActionResult TestAction()
         {
-            string responseMessage = "You're authorized";
-
-            return Ok(new { responseMessage });
+            return Ok(new { responseMessage = "You're authorized" });
         }
     }
 }

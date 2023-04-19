@@ -17,8 +17,14 @@ namespace ChatApp.BLL.Services
         public User GetUserById(int id)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
-            var u = userRepository.TestMethod();
             return userRepository.GetById(id);
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+
+            return userRepository.GetAll().ToList();
         }
     }
 }

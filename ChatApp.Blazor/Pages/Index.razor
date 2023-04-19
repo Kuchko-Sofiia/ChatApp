@@ -1,17 +1,21 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>ChatApp</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <p>
-            Welcome to the blazor chat app.
-        </p>
+        <div>
+            <p>
+                Welcome to the blazor chat app.
+            </p>
+        </div>
     </Authorized>
     <NotAuthorized>
-        <h1>Welcome</h1>
-        <p>
-            To use the chat, please register or authorize your account.
-        </p>
+        <div>
+            <h1>Welcome</h1>
+            <p>
+                To use the chat, please register or authorize your account.
+            </p>
+        </div>
     </NotAuthorized>
 </AuthorizeView>

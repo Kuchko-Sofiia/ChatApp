@@ -15,24 +15,29 @@
         </Authorized>
     </AuthorizeView>
     <main>
-        <div class="top-row px-4">
+        <div class="top-row px-4" style="justify-content:space-between;">
+            <h1 style="">ChatApp</h1>
             <AuthorizeView>
                 <NotAuthorized>
-                    <NavLink class="nav-link" href="login">
-                        <a>Login</a>
-                    </NavLink>
-                    <NavLink class="nav-link" href="signin">
-                        <a>Sign In</a>
-                    </NavLink>
+                    <div style="display: flex">
+                        <NavLink class="nav-link" href="login">
+                            <a>Login</a>
+                        </NavLink>
+                        <NavLink class="nav-link" href="signin">
+                            <a>Sign In</a>
+                        </NavLink>
+                    </div>
                 </NotAuthorized>
                 <Authorized>
-                    Hello, @context.User.Identity!.Name!
-                    <NavLink class="nav-link" href="changepassword">
-                        <a>Change Password</a>
-                    </NavLink>
-                    <NavLink class="nav-link" href="/">
-                        <button class="btn btn-danger" @onclick="Logout">Logout</button>
-                    </NavLink>
+                    <div style="display: flex; align-items:baseline">
+                        Hello, @context.User.Identity!.Name!
+                        <NavLink class="nav-link" href="changepassword">
+                            <a>Change Password</a>
+                        </NavLink>
+                        <NavLink class="nav-link" href="/">
+                            <button class="btn btn-danger" @onclick="Logout">Logout</button>
+                        </NavLink>
+                    </div>
                 </Authorized>
             </AuthorizeView>
         </div>
