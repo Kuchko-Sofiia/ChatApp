@@ -84,6 +84,7 @@ namespace ChatApp.API.Controllers
             });
         }
 
+        [Authorize]
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
@@ -108,6 +109,7 @@ namespace ChatApp.API.Controllers
             return BadRequest(result.Errors);
         }
 
+        [Authorize]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
         {
@@ -139,6 +141,7 @@ namespace ChatApp.API.Controllers
             });
         }
 
+        [Authorize]
         [HttpPost("revoke/{username}")]
         public async Task<IActionResult> Revoke (string username)
         {
@@ -151,6 +154,7 @@ namespace ChatApp.API.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("revoke-all")]
         public async Task<IActionResult> RevokeAll()
         {
