@@ -8,8 +8,21 @@
 <p>Hello!</p>
 <p>Here is your response form API: @messageFromApi</p>
 
+<MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
 
 @code {
+    public string Text { get; set; } = "????";
+    public string ButtonText { get; set; } = "Click Me";
+    public int ButtonClicked { get; set; }
+
+    void ButtonOnClick()
+    {
+        ButtonClicked += 1;
+        Text = $"Awesome x {ButtonClicked}";
+        ButtonText = "Click Me Again";
+    }
+
     private string? messageFromApi;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
