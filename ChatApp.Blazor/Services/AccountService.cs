@@ -8,12 +8,12 @@ namespace ChatApp.Blazor.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IWrappedHttpClient _httpClient;
         private readonly string _baseUrl;
         private readonly ICustomLocalStorageService _localStorageService;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public AccountService(HttpClient httpClient, ICustomLocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider, IConfiguration configuration)
+        public AccountService(IWrappedHttpClient httpClient, ICustomLocalStorageService localStorageService, AuthenticationStateProvider authenticationStateProvider, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _baseUrl = configuration["AppBase"];

@@ -113,7 +113,7 @@ namespace ChatApp.API.Extensions
                                 Id = "Bearer"
                             }
                         },
-                        new string[]{ }
+                        Array.Empty<string>()
                     }
                 });
                 opt.CustomSchemaIds(x => x.FullName);
