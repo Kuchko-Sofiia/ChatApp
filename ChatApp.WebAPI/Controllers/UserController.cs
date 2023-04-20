@@ -2,9 +2,11 @@
 using ChatApp.DTO;
 using ChatApp.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : Controller
@@ -20,7 +22,7 @@ namespace ChatApp.API.Controllers
 
         
         [HttpPost("getallusers")]
-        public async Task<ActionResult<PaginatedDataDTO<UserInfoDTO>>> GetAllUsers(TableStateData tableStateData)
+        public async Task<ActionResult<PaginatedDataDTO<UserInfoDTO>>> GetAllUsers(TableStateData<UserInfoSortProperty> tableStateData)
         {
             var users = await _userService.GetUsersAsync(tableStateData);
 

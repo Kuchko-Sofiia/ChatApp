@@ -1,23 +1,12 @@
 ﻿namespace ChatApp.DTO
 {
-    public class TableStateData
+    public class TableStateData<T> where T : Enum
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
         public string? SearchText { get; set; }
-        public SortOptionsData? SortOptions { get; set; }
-    }
-
-    public class SortOptionsData
-    {
-        public string SortProperty { get; set; }
-        public SortDirectionData SortDirection { get; set; }
-
-        public SortOptionsData(SortDirectionData sortDirection, string sortProperty)
-        {
-            SortDirection = sortDirection;
-            SortProperty = sortProperty;
-        }
+        public T? SortProperty { get; set; }
+        public SortDirectionData? SortDirection { get; set; }
     }
 
     public enum SortDirectionData

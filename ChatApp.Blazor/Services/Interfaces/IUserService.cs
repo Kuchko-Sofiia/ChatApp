@@ -4,6 +4,6 @@ namespace ChatApp.Blazor.Services.Interfaces
 {
     public interface IUserService
     {
-        public Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData tableState);
+        public Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState);
     }
 }

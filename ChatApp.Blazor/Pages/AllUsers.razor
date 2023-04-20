@@ -44,14 +44,14 @@
     private int totalItems;
     private string searchString = null;
 
-    public TableStateData GetTableState()
+    public TableStateData<UserInfoSortProperty> GetTableState()
     {
-        var sortOptions = new SortOptionsData(SortDirectionData.Ascending, UserInfoSortProperty.UserName.ToString());
-        return new TableStateData()
+        return new TableStateData<UserInfoSortProperty>()
             {
                 PageIndex = 1,
                 PageSize = 10,
-                SortOptions = sortOptions,
+                SearchText = "",
+                SortProperty = UserInfoSortProperty.Email
             };
     }
 

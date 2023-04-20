@@ -6,18 +6,16 @@ namespace ChatApp.Blazor.Services
 {
     public class UserService : IUserService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _baseUrl;
+        private readonly IWrappedHttpClient _httpClient;
 
-        public UserService(HttpClient httpClient, IConfiguration configuration)
+        public UserService(IWrappedHttpClient httpClient)
         {
             _httpClient = httpClient;
-            _baseUrl = configuration["AppBase"];
         }
 
-        public async Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData tableState)
+        public async Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}user/getallusers", tableState);
+            var response = await _httpClient.PostAsJsonAsync("user/getallusers", tableState);
 
             response.EnsureSuccessStatusCode();
 

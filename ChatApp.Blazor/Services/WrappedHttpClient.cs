@@ -1,10 +1,12 @@
 ﻿using Blazored.LocalStorage;
 using ChatApp.Blazor.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using static System.Net.WebRequestMethods;
 
 namespace ChatApp.Blazor.Services
 {
@@ -12,11 +14,13 @@ namespace ChatApp.Blazor.Services
     {
         private readonly ICustomLocalStorageService _localStorage;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public WrappedHttpClient(ICustomLocalStorageService localStorage, IHttpClientFactory httpClientFactory)
+        public WrappedHttpClient(ICustomLocalStorageService localStorage, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _localStorage = localStorage;
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<HttpResponseMessage> GetAsync(string requestUri)
@@ -110,6 +114,7 @@ namespace ChatApp.Blazor.Services
 
             var accessToken = await _localStorage.GetJwtTokenAsync();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            httpClient.BaseAddress = new Uri(_configuration["AppBase"]);
 
             return httpClient;
         }
