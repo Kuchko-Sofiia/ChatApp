@@ -11,6 +11,7 @@ namespace ChatApp.BLL.Models
         public bool HasPreviousPage => PageIndex > 1;
         public bool HasNextPage => PageIndex < TotalPages;
 
+        public PaginatedData() { }
         public PaginatedData(List<T> items, int count, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;

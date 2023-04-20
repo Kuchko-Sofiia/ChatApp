@@ -9,10 +9,5 @@ namespace ChatApp.DAL.Repositories.Realizations
     public class UserRepository : Repository<User>, IUserRepository
     {
         public UserRepository(ChatAppDbContext context) : base(context) { }
-
-        public User TestMethod()
-        {
-            return new User();
-        }
     }
 }

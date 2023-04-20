@@ -12,11 +12,11 @@ namespace ChatApp.BLL.DTO.Authentication
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LoginDTO, User>()
+            profile.CreateMap<ChangePasswordDTO, User>()
                 .ForMember(user => user.Email,
                     opt => opt.MapFrom(loginDto => loginDto.Email))
                 .ForMember(user => user.PasswordHash,
-                    opt => opt.MapFrom(loginDto => loginDto.Password)).ReverseMap();
+                    opt => opt.MapFrom(loginDto => loginDto.CurrentPassword)).ReverseMap();
         }
     }
 }

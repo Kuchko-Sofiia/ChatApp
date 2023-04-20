@@ -25,9 +25,9 @@ namespace ChatApp.DAL.Repositories.Realizations
             return _dbSet.Find(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _dbSet.AsEnumerable();
+            return _dbSet.AsQueryable();
         }
 
         public IEnumerable<T> GetAllSorted(Expression<Func<T, object>> orderBy)

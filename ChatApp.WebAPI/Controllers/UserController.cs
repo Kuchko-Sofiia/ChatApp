@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using ChatApp.BLL.DTO;
-using ChatApp.BLL.Services;
+using ChatApp.BLL.Models;
 using ChatApp.BLL.Services.Interfaces;
-using ChatApp.DAL.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.API.Controllers
@@ -22,14 +20,12 @@ namespace ChatApp.API.Controllers
         }
 
         
-        [HttpGet("getallusers")]
-        public async Task<IActionResult> GetAllUsers()
+        [HttpPost("getallusers")]
+        public async Task<ActionResult<PaginatedDataDTO<UserInfoDTO>>> GetAllUsers(TableStateData tableStateData)
         {
-            var users = await _userService.GetAllUsersAsync();
+            var users = await _userService.GetUsersAsync(tableStateData);
 
-            var usersDto = _mapper.Map<List<UserInfoDTO>>(users);
-
-            return Ok(usersDto);
+            return _mapper.Map<PaginatedDataDTO<UserInfoDTO>>(users);
         }
     }
 }

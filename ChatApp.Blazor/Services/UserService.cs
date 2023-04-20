@@ -1,6 +1,5 @@
 ﻿using ChatApp.Blazor.Data;
 using ChatApp.Blazor.Services.Interfaces;
-using Microsoft.AspNetCore.Components.Authorization;
 using System.Text.Json;
 
 namespace ChatApp.Blazor.Services
@@ -16,17 +15,17 @@ namespace ChatApp.Blazor.Services
             _baseUrl = configuration["AppBase"];
         }
 
-        public async Task<List<UserInfoDTO>> GetAllUsersAsync()
+        public async Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData tableState)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}user/getallusers");
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}user/getallusers", tableState);
 
             response.EnsureSuccessStatusCode();
 
-            var userInfoDtos = 
-                await response.Content.ReadFromJsonAsync<List<UserInfoDTO>>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
-                ?? new List<UserInfoDTO>();
+            var paginatedData = 
+                await response.Content.ReadFromJsonAsync<PaginatedDataDTO<UserInfoDTO>>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                ?? new PaginatedDataDTO<UserInfoDTO>();
 
-            return userInfoDtos;
+            return paginatedData;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace ChatApp.BLL.Models
+﻿namespace ChatApp.BLL.DTO
 {
     public class TableStateData
     {
-        public int Page { get; set; }
+        public int PageIndex { get; set; }
         public int PageSize { get; set; }
         public string? SearchText { get; set; }
         public SortOptionsData? SortOptions { get; set; }

@@ -44,65 +44,24 @@
     private int totalItems;
     private string searchString = null;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _usersList = await UserService.GetAllUsersAsync();
-            StateHasChanged();
-        }
-    }
-
     public TableStateData GetTableState()
     {
         var sortOptions = new SortOptionsData(SortDirectionData.Ascending, UserInfoSortProperty.UserName.ToString());
         return new TableStateData()
             {
-                Page = 1,
+                PageIndex = 1,
                 PageSize = 10,
                 SortOptions = sortOptions,
             };
     }
 
-    /// Here we simulate getting the paged, filtered and ordered data from the server
     private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
     {
-        IEnumerable<UserInfoDTO> data = await UserService.GetAllUsersAsync();
+        var paginatedData = await UserService.GetUsersAsync(GetTableState());
+        IEnumerable<UserInfoDTO> data = paginatedData.Items;
         await Task.Delay(100);
-        data = data.Where(user =>
-        {
-            if (string.IsNullOrWhiteSpace(searchString))
-                return true;
-            if (user.UserName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (user.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            if ($"{user.FirstName} {user.LastName} {user.PhoneNumber}".Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
-            return false;
-        }).ToArray();
-        totalItems = data.Count();
-        switch (state.SortLabel)
-        {
-            case "nr_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.UserName);
-                break;
-            case "sign_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.Email);
-                break;
-            case "name_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.FirstName);
-                break;
-            case "position_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.LastName);
-                break;
-            case "mass_field":
-                data = data.OrderByDirection(state.SortDirection, o => o.PhoneNumber);
-                break;
-        }
-
-        _usersList = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new TableData<UserInfoDTO>() { TotalItems = totalItems, Items = _usersList };
+        _usersList = data;
+        return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
     }
 
     private void OnSearch(string text)

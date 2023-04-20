@@ -22,11 +22,15 @@ namespace ChatApp.BLL.Services
             return userRepository.GetById(id);
         }
 
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<PaginatedData<User>> GetUsersAsync(TableStateData tableState)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var users = userRepository.GetAll();
 
-            return userRepository.GetAll().ToList();
+            return await PaginatedData<User>.GetPaginatedDataAsync(
+                source: users,
+                pageIndex: tableState.PageIndex,
+                pageSize: tableState.PageSize);
         }
     }
 }

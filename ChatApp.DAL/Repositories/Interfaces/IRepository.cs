@@ -12,7 +12,7 @@ namespace ChatApp.DAL.Repositories.Interfaces
     {
         T GetById(int id);
 
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
 
         IEnumerable<T> GetAllSorted(Expression<Func<T, object>> orderBy);
 

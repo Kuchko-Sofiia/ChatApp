@@ -1,15 +1,12 @@
-﻿using ChatApp.DAL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ChatApp.BLL.DTO;
+using ChatApp.BLL.Models;
+using ChatApp.DAL.Entities;
 
 namespace ChatApp.BLL.Services.Interfaces
 {
     public interface IUserService
     {
         User GetUserById(int id);
-        public Task<List<User>> GetAllUsersAsync();
+        public Task<PaginatedData<User>> GetUsersAsync(TableStateData tableState);
     }
 }

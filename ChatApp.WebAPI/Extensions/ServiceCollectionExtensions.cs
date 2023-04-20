@@ -54,18 +54,14 @@ namespace ChatApp.API.Extensions
                 opts.Password.RequireDigit = false;
             })
                 .AddEntityFrameworkStores<ChatAppDbContext>()
-                //.AddUserManager<User>()
-                //.AddSignInManager<User>()
                 .AddDefaultTokenProviders();
 
-            //services.AddIdentityCore<User>()
-            //    .AddEntityFrameworkStores<ChatAppDbContext>()
-            //    .AddSignInManager<SignInManager<User>>();
+            //services.AddAutoMapper(config =>
+            //{
+            //    config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic).ToArray()));
+            //});
 
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic).ToArray()));
-            });
+            services.AddAutoMapper(typeof(MappingProfiles));
 
             //Repositories & Unit of Work
             services.AddTransient<IUnitOfWork, UnitOfWork>();
