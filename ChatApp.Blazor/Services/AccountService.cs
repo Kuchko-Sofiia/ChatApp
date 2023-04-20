@@ -1,11 +1,11 @@
 ﻿using ChatApp.Blazor.Services.Interfaces;
-using ChatApp.Blazor.Data;
 using Blazored.LocalStorage;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using ChatApp.Blazor.Helpers;
 using Microsoft.Extensions.Configuration;
 using System.Security.Principal;
+using ChatApp.Blazor.Data.Authentication;
 
 namespace ChatApp.Blazor.Services
 {

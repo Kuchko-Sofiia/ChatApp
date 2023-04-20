@@ -33,4 +33,11 @@ namespace ChatApp.BLL.DTO
             //    opt => opt.MapFrom(userInfoDto => userInfoDto.LastTimeActive)).ReverseMap();
         }
     }
+    public enum UserInfoSortProperty
+    {
+        UserName,
+        Email,
+        LastName,
+        FirstName
+    }
 }

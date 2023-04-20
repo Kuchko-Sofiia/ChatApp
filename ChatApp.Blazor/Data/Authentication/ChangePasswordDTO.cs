@@ -1,5 +1,4 @@
-﻿
-namespace ChatApp.Blazor.Data
+﻿namespace ChatApp.Blazor.Data.Authentication
 {
     public class ChangePasswordDTO
     {

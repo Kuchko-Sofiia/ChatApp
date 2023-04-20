@@ -29,10 +29,10 @@
     <Content Update="Pages\Index.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Pages\Login.razor">
+    <Content Update="Pages\Authentication\Login.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Pages\SignIn.razor">
+    <Content Update="Pages\Authentication\SignIn.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Pages\_Host.cshtml">

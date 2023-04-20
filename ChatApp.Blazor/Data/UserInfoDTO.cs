@@ -10,4 +10,12 @@
         //public DateTime DateOfBirth { get; set; }
         //public DateTime LastTimeActive { get; set; }
     }
+
+    public enum UserInfoSortProperty
+    {
+        UserName,
+        Email,
+        LastName,
+        FirstName
+    }
 }

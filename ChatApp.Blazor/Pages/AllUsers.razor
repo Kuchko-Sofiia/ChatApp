@@ -1,22 +1,48 @@
 ﻿@page "/allusers"
+@using System.Net.Http.Json
 @using ChatApp.Blazor.Data;
 @using ChatApp.Blazor.Services.Interfaces;
-
 @inject IUserService UserService
 
-<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@_usersList" TItem="UserInfoDTO" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-    <Columns>
-        <RadzenDataGridColumn TItem="UserInfoDTO" Title="UserName" Property="UserName" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn TItem="UserInfoDTO" Title="Email" Property="Email" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn TItem="UserInfoDTO" Title="First Name" Property="FirstName" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn TItem="UserInfoDTO" Title="Last Name" Property="LastName" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn TItem="UserInfoDTO" Title="Phone Number" Property="PhoneNumber" Filterable="true" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-    </Columns>
-</RadzenDataGrid>
+<MudTable ServerData="@(new Func<TableState, Task<TableData<UserInfoDTO>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">All Users</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="nr_field" T="UserInfoDTO">UserName</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="sign_field" T="UserInfoDTO">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="UserInfoDTO">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="position_field" T="UserInfoDTO">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="mass_field" T="UserInfoDTO">Phone Number</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="UserName">@context.UserName</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+        <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
 @code {
     private IEnumerable<UserInfoDTO>? _usersList;
+    private MudTable<UserInfoDTO> table;
+
+    private int totalItems;
+    private string searchString = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -25,5 +51,63 @@
             _usersList = await UserService.GetAllUsersAsync();
             StateHasChanged();
         }
+    }
+
+    public TableStateData GetTableState()
+    {
+        var sortOptions = new SortOptionsData(SortDirectionData.Ascending, UserInfoSortProperty.UserName.ToString());
+        return new TableStateData()
+            {
+                Page = 1,
+                PageSize = 10,
+                SortOptions = sortOptions,
+            };
+    }
+
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
+    {
+        IEnumerable<UserInfoDTO> data = await UserService.GetAllUsersAsync();
+        await Task.Delay(100);
+        data = data.Where(user =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (user.UserName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (user.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if ($"{user.FirstName} {user.LastName} {user.PhoneNumber}".Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        switch (state.SortLabel)
+        {
+            case "nr_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.UserName);
+                break;
+            case "sign_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Email);
+                break;
+            case "name_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.FirstName);
+                break;
+            case "position_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.LastName);
+                break;
+            case "mass_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.PhoneNumber);
+                break;
+        }
+
+        _usersList = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<UserInfoDTO>() { TotalItems = totalItems, Items = _usersList };
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
     }
 }
