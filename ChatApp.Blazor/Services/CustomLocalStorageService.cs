@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using ChatApp.Blazor.Data.Authentication;
+using ChatApp.DTO.Authentication;
 using ChatApp.Blazor.Services.Interfaces;
 
 namespace ChatApp.Blazor.Services

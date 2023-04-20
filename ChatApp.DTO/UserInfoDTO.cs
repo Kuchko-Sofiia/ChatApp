@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Blazor.Data
+﻿namespace ChatApp.DTO
 {
     public class UserInfoDTO
     {
@@ -9,8 +9,8 @@
         public string? PhoneNumber { get; set; }
         //public DateTime DateOfBirth { get; set; }
         //public DateTime LastTimeActive { get; set; }
+        public UserInfoDTO() { }
     }
-
     public enum UserInfoSortProperty
     {
         UserName,

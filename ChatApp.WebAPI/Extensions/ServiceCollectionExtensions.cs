@@ -1,19 +1,19 @@
-﻿using ChatApp.BLL.Mapping;
+﻿using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using ChatApp.BLL.Services.Interfaces;
 using ChatApp.BLL.Services;
+using ChatApp.DAL.Entities;
 using ChatApp.DAL.Data;
 using ChatApp.DAL.Repositories.Interfaces;
 using ChatApp.DAL.Repositories.Realizations;
 using ChatApp.DAL.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
-using ChatApp.DAL.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System;
-using Microsoft.AspNetCore.Authorization;
+using ChatApp.API.Mapping;
+
 
 namespace ChatApp.API.Extensions
 {

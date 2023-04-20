@@ -1,4 +1,4 @@
-﻿using ChatApp.BLL.DTO;
+﻿using ChatApp.DTO;
 using ChatApp.BLL.Models;
 using ChatApp.BLL.Services.Interfaces;
 using ChatApp.DAL.Entities;

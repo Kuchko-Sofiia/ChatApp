@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ChatApp.BLL.DTO;
-using ChatApp.BLL.DTO.Authentication;
+using ChatApp.DTO;
+using ChatApp.DTO.Authentication;
 using ChatApp.BLL.Models;
 using ChatApp.DAL.Entities;
 
-namespace ChatApp.API
+namespace ChatApp.API.Mapping
 {
-    public class MappingProfiles: Profile
+    public class MappingProfiles : Profile
     {
         public MappingProfiles()
         {

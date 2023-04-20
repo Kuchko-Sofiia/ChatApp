@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace ChatApp.BLL.Mapping
+namespace ChatApp.API.Mapping
 {
     public interface IMapWith<T> where T : class
     {

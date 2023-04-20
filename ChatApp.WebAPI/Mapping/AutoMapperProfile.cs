@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ChatApp.BLL.Mapping
+
+namespace ChatApp.API.Mapping
 {
     public class AutoMapperProfile : Profile
     {
@@ -14,7 +10,7 @@ namespace ChatApp.BLL.Mapping
         {
             ApplyMappingsFromAssembly(assemblies);
         }
-
+        public AutoMapperProfile() { }
         private void ApplyMappingsFromAssembly(Assembly[] assemblies)
         {
             foreach (var assembly in assemblies)
@@ -27,7 +23,7 @@ namespace ChatApp.BLL.Mapping
 
                 foreach (var type in types)
                 {
-                    var instance = Activator.CreateInstance(type); //!!
+                    var instance = Activator.CreateInstance(type);
                     var methodInfo = type.GetMethod("Mapping");
                     methodInfo?.Invoke(instance, new object[] { this });
                 }

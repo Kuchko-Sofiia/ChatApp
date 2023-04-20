@@ -1,6 +1,6 @@
 ﻿@page "/allusers"
 @using System.Net.Http.Json
-@using ChatApp.Blazor.Data;
+@using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
 @inject IUserService UserService
 
@@ -59,7 +59,6 @@
     {
         var paginatedData = await UserService.GetUsersAsync(GetTableState());
         IEnumerable<UserInfoDTO> data = paginatedData.Items;
-        await Task.Delay(100);
         _usersList = data;
         return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
     }

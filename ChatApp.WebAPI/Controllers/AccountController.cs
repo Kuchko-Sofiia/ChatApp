@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using ChatApp.BLL.DTO.Authentication;
+using ChatApp.DTO.Authentication;
 using ChatApp.BLL.Services.Interfaces;
 using ChatApp.DAL.Entities;
 

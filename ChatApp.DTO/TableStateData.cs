@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Blazor.Data
+﻿namespace ChatApp.DTO
 {
     public class TableStateData
     {

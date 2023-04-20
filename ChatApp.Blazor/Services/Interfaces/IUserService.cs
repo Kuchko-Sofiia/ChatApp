@@ -1,4 +1,4 @@
-﻿using ChatApp.Blazor.Data;
+﻿using ChatApp.DTO;
 
 namespace ChatApp.Blazor.Services.Interfaces
 {

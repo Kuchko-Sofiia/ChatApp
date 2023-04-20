@@ -1,4 +1,4 @@
-﻿using ChatApp.Blazor.Data.Authentication;
+﻿using ChatApp.DTO.Authentication;
 
 namespace ChatApp.Blazor.Services.Interfaces
 {

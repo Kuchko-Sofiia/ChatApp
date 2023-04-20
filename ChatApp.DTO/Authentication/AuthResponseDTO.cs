@@ -1,5 +1,4 @@
-﻿
-namespace ChatApp.BLL.DTO.Authentication
+﻿namespace ChatApp.DTO.Authentication
 {
     public class AuthResponseDTO
     {

@@ -1,4 +1,4 @@
-﻿using ChatApp.Blazor.Data;
+﻿using ChatApp.DTO;
 using ChatApp.Blazor.Services.Interfaces;
 using System.Text.Json;
 

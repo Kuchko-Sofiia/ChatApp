@@ -1,11 +1,8 @@
 ﻿using ChatApp.Blazor.Services.Interfaces;
-using Blazored.LocalStorage;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using ChatApp.Blazor.Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Security.Principal;
-using ChatApp.Blazor.Data.Authentication;
+using ChatApp.DTO.Authentication;
 
 namespace ChatApp.Blazor.Services
 {

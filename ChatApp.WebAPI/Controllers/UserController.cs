@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using ChatApp.BLL.DTO;
-using ChatApp.BLL.Models;
+using ChatApp.DTO;
 using ChatApp.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
