@@ -2,20 +2,22 @@
 
 <PageTitle>ChatApp</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
-        <div>
-            <p>
-                Welcome to the blazor chat app.
-            </p>
-        </div>
-    </Authorized>
-    <NotAuthorized>
-        <div>
-            <h1>Welcome</h1>
-            <p>
-                To use the chat, please register or authorize your account.
-            </p>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
+<div style="display:flex; justify-content:center; margin-top: 50px">
+    <AuthorizeView>
+        <Authorized>
+            <div>
+                <h2>
+                    Welcome to the blazor chat app.
+                </h2>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div>
+                <h1>Welcome</h1>
+                <h5>
+                    To use the chat, please register or authorize your account.
+                </h5>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>

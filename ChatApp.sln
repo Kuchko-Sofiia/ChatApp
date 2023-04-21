@@ -15,7 +15,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ChatApp.DBP", "ChatApp.DBP\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Blazor", "ChatApp.Blazor\ChatApp.Blazor.csproj", "{0970265E-C2D4-4231-B0D4-2AF537D5EBAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.DTO", "ChatApp.DTO\ChatApp.DTO.csproj", "{3D87D490-6A2E-4D1C-9049-FA13CE692CFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.DTO", "ChatApp.DTO\ChatApp.DTO.csproj", "{3D87D490-6A2E-4D1C-9049-FA13CE692CFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

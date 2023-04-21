@@ -6,7 +6,7 @@ namespace ChatApp.BLL.Services.Interfaces
 {
     public interface IUserService
     {
-        User GetUserById(int id);
+        public User GetUserById(string id);
         public Task<PaginatedData<User>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState);
     }
 }

@@ -1,0 +1,52 @@
+﻿@page "/userdetail"
+@using System.Net.Http.Json
+@using ChatApp.DTO;
+@using ChatApp.Blazor.Services.Interfaces;
+@using Microsoft.AspNetCore.WebUtilities;
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<MudCard Style="width: 400px; justify-self:center">
+    <MudCardMedia Image="https://fastly.picsum.photos/id/40/4106/2806.jpg?hmac=MY3ra98ut044LaWPEKwZowgydHZ_rZZUuOHrc3mL5mI" Height="200" />
+    <MudCardContent>
+        <MudText Typo="Typo.h5">@userInfo?.FirstName @userInfo?.LastName</MudText>
+        <MudPaper Width="100%" Square="true">
+            <MudList>
+                <MudListItem>
+                    <MudIcon Icon="@Icons.Material.Filled.AlternateEmail" Color="Color.Primary" />
+                    @userInfo?.UserName
+                </MudListItem>
+                <MudDivider DividerType="DividerType.Inset" />
+                <MudListItem>
+                    <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary" />
+                    @userInfo?.Email
+                </MudListItem>
+                <MudDivider DividerType="DividerType.Inset" />
+                <MudListItem>
+                    <MudIcon Icon="@Icons.Material.Filled.PhoneAndroid" Color="Color.Primary" />
+                    @userInfo?.PhoneNumber
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Back</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Edit user</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    private UserInfoDTO? userInfo;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            string id = QueryHelpers.ParseQuery(uri.Query)["id"];
+
+            userInfo = await UserService.GetUserByIdAsync(id);
+            StateHasChanged();
+        }
+    }
+}

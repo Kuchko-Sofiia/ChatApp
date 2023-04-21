@@ -20,7 +20,7 @@ namespace ChatApp.DAL.Repositories.Realizations
             _dbSet = _context.Set<T>();
         }
 
-        public T GetById(int id)
+        public T GetById(string id)
         {
             return _dbSet.Find(id);
         }

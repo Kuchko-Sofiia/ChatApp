@@ -11,6 +11,7 @@
 
     public enum SortDirectionData
     {
+        None,
         Ascending,
         Descending
     }

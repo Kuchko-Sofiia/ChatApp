@@ -20,13 +20,18 @@ namespace ChatApp.API.Controllers
             _userService = userService;
         }
 
-        
         [HttpPost("getallusers")]
         public async Task<ActionResult<PaginatedDataDTO<UserInfoDTO>>> GetAllUsers(TableStateData<UserInfoSortProperty> tableStateData)
         {
             var users = await _userService.GetUsersAsync(tableStateData);
-
             return _mapper.Map<PaginatedDataDTO<UserInfoDTO>>(users);
+        }
+
+        [HttpGet("getbyid")]
+        public async Task<ActionResult<UserInfoDTO>> GetUserById([FromQuery] string userId)
+        {
+            var user = _userService.GetUserById(userId);
+            return _mapper.Map<UserInfoDTO>(user);
         }
     }
 }

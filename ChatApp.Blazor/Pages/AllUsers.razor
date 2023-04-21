@@ -3,6 +3,7 @@
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
 @inject IUserService UserService
+@inject NavigationManager NavigationManager
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<UserInfoDTO>>>(ServerReload))"
           Dense="true" Hover="true" @ref="table">
@@ -13,18 +14,28 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="nr_field" T="UserInfoDTO">UserName</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="sign_field" T="UserInfoDTO">Email</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="name_field" T="UserInfoDTO">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="position_field" T="UserInfoDTO">Last Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="mass_field" T="UserInfoDTO">Phone Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="UserName" T="UserInfoDTO">UserName</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Email" T="UserInfoDTO">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="FirstName" T="UserInfoDTO">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="LastName" T="UserInfoDTO">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="PhoneNumber" T="UserInfoDTO">Phone Number</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="UserName">@context.UserName</MudTd>
-        <MudTd DataLabel="Email">@context.Email</MudTd>
-        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
-        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
-        <MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+        <MudTd DataLabel="UserName">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.UserName"HighlightedText="@searchString"/>
+        </MudTd>
+        <MudTd DataLabel="Email">
+            <MudHighlighter Class="mud-primary-text"Style="background-color:transparent;font-weight:bold;display:contents"Text="@context.Email" HighlightedText="@searchString"/>
+        </MudTd>
+        <MudTd DataLabel="First Name">
+            <MudHighlighter Class="mud-primary-text"Style="background-color:transparent;font-weight:bold;display:contents"Text="@context.FirstName" HighlightedText="@searchString"/>
+        </MudTd>
+        <MudTd DataLabel="Last Name">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.LastName" HighlightedText="@searchString" />
+        </MudTd>
+        <MudTd DataLabel="Phone Number">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.PhoneNumber" HighlightedText="@searchString" />
+        </MudTd>
     </RowTemplate>
     <NoRecordsContent>
         <MudText>No matching records found</MudText>
@@ -39,33 +50,40 @@
 
 @code {
     private IEnumerable<UserInfoDTO>? _usersList;
-    private MudTable<UserInfoDTO> table;
+    private MudTable<UserInfoDTO>? table;
 
     private int totalItems;
-    private string searchString = null;
+    private string? searchString = null;
 
-    public TableStateData<UserInfoSortProperty> GetTableState()
+    public TableStateData<UserInfoSortProperty> GetTableState(TableState state)
     {
         return new TableStateData<UserInfoSortProperty>()
-            {
-                PageIndex = 1,
-                PageSize = 10,
-                SearchText = "",
-                SortProperty = UserInfoSortProperty.Email
-            };
+        {
+            PageIndex = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchText = searchString,
+            SortProperty = Enum.TryParse(state.SortLabel, out UserInfoSortProperty userInfoSortProperty) ? userInfoSortProperty : default,
+            SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
+        };
     }
 
     private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
     {
-        var paginatedData = await UserService.GetUsersAsync(GetTableState());
+        var paginatedData = await UserService.GetUsersAsync(GetTableState(state));
         IEnumerable<UserInfoDTO> data = paginatedData.Items;
         _usersList = data;
         return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
     }
 
+    //private string RowClickHandler(UserInfoDTO userInfoDTO, int index)
+    //{
+    //    NavigationManager.NavigateTo($"/userdetail?id={userInfoDTO.Id}");
+    //    return string.Empty;
+    //}
+
     private void OnSearch(string text)
     {
         searchString = text;
-        table.ReloadServerData();
+        table?.ReloadServerData();
     }
 }

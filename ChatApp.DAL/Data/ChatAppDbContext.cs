@@ -1,4 +1,5 @@
 ﻿using ChatApp.DAL.Entities;
+using ChatApp.DAL.Extentions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,7 @@ namespace ChatApp.DAL.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.SeedData();
             base.OnModelCreating(modelBuilder);
         }
 
