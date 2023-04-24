@@ -1,12 +1,7 @@
-﻿using Blazored.LocalStorage;
-using ChatApp.Blazor.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using ChatApp.Blazor.Services.Interfaces;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using static System.Net.WebRequestMethods;
 
 namespace ChatApp.Blazor.Services
 {
@@ -39,7 +34,6 @@ namespace ChatApp.Blazor.Services
         {
             using var client = await GetHttpClientAsync();
             return await client.PostAsync(requestUri, content);
-
         }
 
         public async Task<HttpResponseMessage> PostAsync(Uri? requestUri, HttpContent? content)
@@ -123,7 +117,8 @@ namespace ChatApp.Blazor.Services
         {
             if(response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                await _localStorage.RemoveJwtTokenInfoAsync();
+                //var httpClient = _httpClientFactory.CreateClient();
+                //await _localStorage.RemoveJwtTokenInfoAsync();
             }
         }
     }

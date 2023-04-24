@@ -16,10 +16,10 @@ namespace ChatApp.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public User GetUserById(string id)
+        public async Task<User> GetUserById(string id)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
-            return userRepository.GetById(id);
+            return await userRepository.GetById(id);
         }
 
         public async Task<PaginatedData<User>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState)
@@ -60,6 +60,24 @@ namespace ChatApp.BLL.Services
                 source: users,
                 pageIndex: tableState.PageIndex,
                 pageSize: tableState.PageSize);
+        }
+
+        public async Task<bool> EditUser(UserInfoDTO userToEdit)
+        {
+            var userRepository = _unitOfWork.GetRepository<IUserRepository>();
+            var user =  await userRepository.GetById(userToEdit.Id);
+
+            if (user == null)
+                return false;
+
+            user.UserName = userToEdit.UserName;
+            user.Email = userToEdit.Email;
+            user.FirstName = userToEdit.FirstName;
+            user.LastName = userToEdit.LastName;
+            user.PhoneNumber = userToEdit.PhoneNumber;
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

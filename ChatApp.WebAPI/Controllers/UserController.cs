@@ -30,8 +30,26 @@ namespace ChatApp.API.Controllers
         [HttpGet("getbyid")]
         public async Task<ActionResult<UserInfoDTO>> GetUserById([FromQuery] string userId)
         {
-            var user = _userService.GetUserById(userId);
+            var user = await _userService.GetUserById(userId);
             return _mapper.Map<UserInfoDTO>(user);
+        }
+
+        [HttpPut("edit")]
+        public async Task<ActionResult<UserInfoDTO>> Edit([FromBody] UserInfoDTO userToEdit)
+        {
+            if(userToEdit.Email != HttpContext.User.Identity.Name)
+            {
+                var errors = new Dictionary<string, string>();
+                errors.Add("User update failed", "You can't change this user information.");
+                return Unauthorized(errors);
+            }
+
+            var result = await _userService.EditUser(userToEdit);
+
+            if (result)
+                return Ok();
+            else
+                return NotFound();
         }
     }
 }

@@ -20,9 +20,9 @@ namespace ChatApp.DAL.Repositories.Realizations
             _dbSet = _context.Set<T>();
         }
 
-        public T GetById(string id)
+        public async Task<T> GetById(string id)
         {
-            return _dbSet.Find(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public IQueryable<T> GetAll()

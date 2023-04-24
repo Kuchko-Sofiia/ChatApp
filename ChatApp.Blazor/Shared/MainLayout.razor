@@ -1,7 +1,10 @@
-﻿@using ChatApp.Blazor.Services.Interfaces;
+﻿@using ChatApp.Blazor.Helpers;
+@using ChatApp.Blazor.Services.Interfaces;
+@using System.Security.Claims;
 
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAccountService AccountService
 
 <PageTitle>ChatApp.Blazor</PageTitle>
@@ -29,14 +32,19 @@
                     </div>
                 </NotAuthorized>
                 <Authorized>
-                    <div style="display: flex; align-items:baseline">
-                        Hello, @context.User.Identity!.Name!
-                        <NavLink class="nav-link" href="changepassword">
-                            <a>Change Password</a>
-                        </NavLink>
-                        <NavLink class="nav-link" href="/">
-                            <button class="btn btn-danger" @onclick="Logout">Logout</button>
-                        </NavLink>
+                    <div style="display: flex; align-items:center;">
+                        <span style="white-space: pre">Hello, </span>
+                        <button onclick="@(() => NavigateToProfile())" Style="color: rgb(89, 74, 226)">
+                            @context.User.Identity!.Name!
+                        </button>
+                        <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Primary">
+                            <NavLink class="nav-link" href="changepassword">
+                                <MudMenuItem>Change Password</MudMenuItem>
+                            </NavLink>
+                            <NavLink class="nav-link" href="/">
+                                <MudMenuItem OnClick="Logout">Logout</MudMenuItem>
+                            </NavLink>
+                        </MudMenu>
                     </div>
                 </Authorized>
             </AuthorizeView>
@@ -57,5 +65,12 @@
     {
         await AccountService.Logout();
         NavigationManager.NavigateTo("/");
+    }
+    private async Task NavigateToProfile()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        //var userId2 = authState.User.Claims.ResultView
+        var userId = authState.User.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"); // Assuming that the user ID is stored in the "sub" claim
+        NavigationManager.NavigateTo($"/user-details?userId={userId}");
     }
 }

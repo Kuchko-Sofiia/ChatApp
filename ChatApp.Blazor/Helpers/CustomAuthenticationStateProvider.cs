@@ -1,5 +1,4 @@
-﻿using Blazored.LocalStorage;
-using ChatApp.Blazor.Services.Interfaces;
+﻿using ChatApp.Blazor.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -52,9 +51,11 @@ namespace ChatApp.Blazor.Helpers
             var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
 
             var name = claims.GetValueOrDefault("name");
-            if (!string.IsNullOrEmpty(name))
+            var id = claims.GetValueOrDefault("NameIdentifier");
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(id))
             {
                 claims.Add(ClaimTypes.Name, name);
+                claims.Add(ClaimTypes.NameIdentifier, id);
             }
 
             return claims;

@@ -2,6 +2,7 @@
 using ChatApp.Blazor.Services.Interfaces;
 using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace ChatApp.Blazor.Services
 {
@@ -30,12 +31,19 @@ namespace ChatApp.Blazor.Services
         {
             var queryStringParam = new Dictionary<string, string?>()
             {
-                ["userId"] = "id"
+                ["userId"] = id
             };
             var responce = await _httpClient.GetAsync(QueryHelpers.AddQueryString("user/getbyid", queryStringParam));
 
             var data = await responce.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return data;
+        }
+
+        public async Task EditUserAsync(UserInfoDTO userInfoDto)
+        {
+            var json = JsonSerializer.Serialize(userInfoDto);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            await _httpClient.PutAsync("user/edit", content);
         }
     }
 }

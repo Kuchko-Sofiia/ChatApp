@@ -6,6 +6,8 @@
 @inject NavigationManager NavigationManager
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<UserInfoDTO>>>(ServerReload))"
+          OnRowClick="RowClickEvent"
+          T="UserInfoDTO"
           Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">All Users</MudText>
@@ -55,18 +57,6 @@
     private int totalItems;
     private string? searchString = null;
 
-    public TableStateData<UserInfoSortProperty> GetTableState(TableState state)
-    {
-        return new TableStateData<UserInfoSortProperty>()
-        {
-            PageIndex = state.Page + 1,
-            PageSize = state.PageSize,
-            SearchText = searchString,
-            SortProperty = Enum.TryParse(state.SortLabel, out UserInfoSortProperty userInfoSortProperty) ? userInfoSortProperty : default,
-            SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
-        };
-    }
-
     private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
     {
         var paginatedData = await UserService.GetUsersAsync(GetTableState(state));
@@ -75,15 +65,26 @@
         return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
     }
 
-    //private string RowClickHandler(UserInfoDTO userInfoDTO, int index)
-    //{
-    //    NavigationManager.NavigateTo($"/userdetail?id={userInfoDTO.Id}");
-    //    return string.Empty;
-    //}
+    private void RowClickEvent(TableRowClickEventArgs<UserInfoDTO> tableRowClickEventArgs)
+    {
+        NavigationManager.NavigateTo($"/user-details?userId={tableRowClickEventArgs.Item.Id}");
+    }
 
     private void OnSearch(string text)
     {
         searchString = text;
         table?.ReloadServerData();
+    }
+
+    public TableStateData<UserInfoSortProperty> GetTableState(TableState state)
+    {
+        return new TableStateData<UserInfoSortProperty>()
+            {
+                PageIndex = state.Page + 1,
+                PageSize = state.PageSize,
+                SearchText = searchString,
+                SortProperty = Enum.TryParse(state.SortLabel, out UserInfoSortProperty userInfoSortProperty) ? userInfoSortProperty : default,
+                SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
+            };
     }
 }

@@ -1,0 +1,64 @@
+﻿@page "/user-edit"
+@using System.Net.Http.Json
+@using ChatApp.DTO;
+@using ChatApp.Blazor.Services.Interfaces;
+@using Microsoft.AspNetCore.WebUtilities;
+@using System.ComponentModel.DataAnnotations;
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="d-flex justify-content-center">
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <h3 class="mb-5">EditUser</h3>
+                @if (userInfo != null)
+                {
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" ReadOnly="false">
+                        <MudTextField @bind-Value="@userInfo.UserName" Label="UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-5" />
+                        <MudTextField @bind-Value="@userInfo.Email" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-5" />
+                        <MudTextField @bind-Value="@userInfo.FirstName" Label="First Name" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-5" />
+                        <MudTextField @bind-Value="@userInfo.LastName" Label="Last Name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+
+                        <div class="d-flex mt-5">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OnBack())">Back</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OnSaveChanges())" Disabled="@(!success)" Class="ml-auto">Save Changes</MudButton>
+                        </div>
+                    </MudForm>
+                }
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</div>
+
+@code {
+    bool success;
+    string[]? errors = { };
+    MudTextField<string>? pwField1;
+    MudForm? form;
+
+    private UserInfoDTO? userInfo;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            string id = QueryHelpers.ParseQuery(uri.Query)["userId"];
+
+            userInfo = await UserService.GetUserByIdAsync(id);
+            StateHasChanged();
+        }
+    }
+
+    private void OnBack()
+    {
+        NavigationManager.NavigateTo($"/user-details?userId={userInfo?.Id}");
+    }
+
+    private async void OnSaveChanges()
+    {
+        await UserService.EditUserAsync(userInfo);
+        NavigationManager.NavigateTo($"/user-details?userId={userInfo?.Id}");
+    }
+}

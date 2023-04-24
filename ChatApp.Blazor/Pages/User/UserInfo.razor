@@ -1,0 +1,70 @@
+﻿@page "/user-details"
+@attribute [Authorize]
+@using System.Net.Http.Json
+@using ChatApp.DTO;
+@using ChatApp.Blazor.Services.Interfaces;
+@using Microsoft.AspNetCore.WebUtilities;
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<div class="d-flex justify-content-center">
+    <MudCard Style="width: 400px;">
+        <MudCardMedia Image="https://fastly.picsum.photos/id/40/4106/2806.jpg?hmac=MY3ra98ut044LaWPEKwZowgydHZ_rZZUuOHrc3mL5mI" Height="200" />
+        <MudCardContent>
+            <MudText Typo="Typo.h5">@_userInfo?.FirstName @_userInfo?.LastName</MudText>
+            <MudPaper Width="100%" Square="true">
+                <MudList>
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.AlternateEmail" Color="Color.Primary" />
+                        @_userInfo?.UserName
+                    </MudListItem>
+                    <MudDivider DividerType="DividerType.Inset" />
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary" />
+                        @_userInfo?.Email
+                    </MudListItem>
+                    <MudDivider DividerType="DividerType.Inset" />
+                    <MudListItem>
+                        <MudIcon Icon="@Icons.Material.Filled.PhoneAndroid" Color="Color.Primary" />
+                        @_userInfo?.PhoneNumber
+                    </MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudCardContent>
+        <MudCardActions Class="d-flex justify-content-between">
+            <NavLink href="allusers">
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Back</MudButton>
+            </NavLink>
+            @if (_editEnabled)
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OnEdit())">Edit</MudButton>
+            }
+        </MudCardActions>
+    </MudCard>
+</div>
+
+@code {
+    private UserInfoDTO? _userInfo;
+    private bool _editEnabled;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            string id = QueryHelpers.ParseQuery(uri.Query)["userId"];
+            _userInfo = await UserService.GetUserByIdAsync(id);
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _editEnabled = _userInfo?.Email == authState.User.Identity?.Name;
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnEdit()
+    {
+        var uri = new Uri(NavigationManager.ToAbsoluteUri($"/user-edit?userId={_userInfo.Id}").ToString());
+        NavigationManager.NavigateTo(uri.ToString());
+    }
+}
