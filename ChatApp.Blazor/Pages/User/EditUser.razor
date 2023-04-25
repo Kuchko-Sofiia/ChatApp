@@ -1,4 +1,4 @@
-﻿@page "/user-edit"
+﻿@page "/users/edit-user"
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
@@ -53,12 +53,12 @@
 
     private void OnBack()
     {
-        NavigationManager.NavigateTo($"/user-details?userId={userInfo?.Id}");
+        NavigationManager.NavigateTo($"/users/user-details?userId={userInfo?.Id}");
     }
 
     private async void OnSaveChanges()
     {
         await UserService.EditUserAsync(userInfo);
-        NavigationManager.NavigateTo($"/user-details?userId={userInfo?.Id}");
+        NavigationManager.NavigateTo($"/users/user-details?userId={userInfo?.Id}");
     }
 }

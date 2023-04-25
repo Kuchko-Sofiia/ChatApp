@@ -1,4 +1,4 @@
-﻿@page "/user-details"
+﻿@page "/users/user-details"
 @attribute [Authorize]
 @using System.Net.Http.Json
 @using ChatApp.DTO;
@@ -33,7 +33,7 @@
             </MudPaper>
         </MudCardContent>
         <MudCardActions Class="d-flex justify-content-between">
-            <NavLink href="allusers">
+            <NavLink href="users">
                 <MudButton Variant="Variant.Text" Color="Color.Primary">Back</MudButton>
             </NavLink>
             @if (_editEnabled)
@@ -64,7 +64,7 @@
 
     private void OnEdit()
     {
-        var uri = new Uri(NavigationManager.ToAbsoluteUri($"/user-edit?userId={_userInfo.Id}").ToString());
+        var uri = new Uri(NavigationManager.ToAbsoluteUri($"/users/edit-user?userId={_userInfo.Id}").ToString());
         NavigationManager.NavigateTo(uri.ToString());
     }
 }

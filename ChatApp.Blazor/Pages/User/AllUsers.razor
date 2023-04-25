@@ -1,7 +1,8 @@
-﻿@page "/allusers"
+﻿@page "/users"
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
+@using Microsoft.AspNetCore.WebUtilities;
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
@@ -56,10 +57,19 @@
 
     private int totalItems;
     private string? searchString = null;
+    //private bool _firstRender = true;
 
     private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
     {
+        //if (_firstRender)
+        //{
+        //    SetTableStateFromQuery(state);
+        //    _firstRender = false;
+        //}
+
         var paginatedData = await UserService.GetUsersAsync(GetTableState(state));
+        //GenerateUserNavigationUrl(state);
+
         IEnumerable<UserInfoDTO> data = paginatedData.Items;
         _usersList = data;
         return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
@@ -67,7 +77,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<UserInfoDTO> tableRowClickEventArgs)
     {
-        NavigationManager.NavigateTo($"/user-details?userId={tableRowClickEventArgs.Item.Id}");
+        NavigationManager.NavigateTo($"/users/user-details?userId={tableRowClickEventArgs.Item.Id}");
     }
 
     private void OnSearch(string text)
@@ -86,5 +96,47 @@
                 SortProperty = Enum.TryParse(state.SortLabel, out UserInfoSortProperty userInfoSortProperty) ? userInfoSortProperty : default,
                 SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
             };
+    }
+
+    private void GenerateUserNavigationUrl(TableState state)
+    {
+        var queryParams = new Dictionary<string, string?>();
+
+        queryParams["page"] = state.Page.ToString();
+        queryParams["pageSize"] = state.PageSize.ToString();
+
+        if (!string.IsNullOrWhiteSpace(searchString))
+            queryParams["searchString"] = searchString;
+
+        if (state.SortLabel != null)
+            queryParams["sortLabel"] = state.SortLabel.ToString();
+
+        if (state.SortDirection != SortDirection.None)
+            queryParams["orderBy"] = state.SortDirection.ToString();
+
+        var url = QueryHelpers.AddQueryString("/users", queryParams);
+
+        NavigationManager.NavigateTo(url);
+    }
+
+    private void SetTableStateFromQuery(TableState state)
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.ContainsKey("page") && int.TryParse(query["page"], out int page))
+            state.Page = page;
+
+        if (query.ContainsKey("pageSize") && int.TryParse(query["pageSize"], out int pageSize))
+            state.PageSize = pageSize;
+
+        if (query.ContainsKey("searchString"))
+            searchString = query["searchString"].ToString();
+
+        if (query.ContainsKey("sortLabel"))
+            state.SortLabel = query["sortLabel"].ToString();
+
+        if (query.ContainsKey("orderBy") && Enum.TryParse(query["orderBy"], out SortDirection sortDirection))
+            state.SortDirection = sortDirection;
     }
 }
