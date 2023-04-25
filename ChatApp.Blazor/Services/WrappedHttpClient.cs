@@ -1,4 +1,6 @@
 ﻿using ChatApp.Blazor.Services.Interfaces;
+using ChatApp.DTO.Authentication;
+using Microsoft.AspNetCore.Components;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -10,12 +12,14 @@ namespace ChatApp.Blazor.Services
         private readonly ICustomLocalStorageService _localStorage;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly NavigationManager _navigationManager;
 
-        public WrappedHttpClient(ICustomLocalStorageService localStorage, IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public WrappedHttpClient(ICustomLocalStorageService localStorage, IHttpClientFactory httpClientFactory, NavigationManager navigationManager, IConfiguration configuration)
         {
             _localStorage = localStorage;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _navigationManager = navigationManager;
         }
 
         public async Task<HttpResponseMessage> GetAsync(string requestUri)
@@ -117,8 +121,30 @@ namespace ChatApp.Blazor.Services
         {
             if(response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                //var httpClient = _httpClientFactory.CreateClient();
-                //await _localStorage.RemoveJwtTokenInfoAsync();
+                if(DateTime.UtcNow != await _localStorage.GetRefreshTokenExpTimeAsync())
+                {
+                    await _localStorage.RemoveJwtTokenInfoAsync();
+                    _navigationManager.NavigateTo("/");
+                }
+
+                var tokenDto = new TokenDTO()
+                {
+                    RefreshToken = await _localStorage.GetRefreshTokenAsync(),
+                    AccessToken = await _localStorage.GetJwtTokenAsync()
+                };
+
+                if (tokenDto.RefreshToken != null)
+                {
+                    var httpClient = _httpClientFactory.CreateClient();
+                    var tokenResponse = await httpClient.PostAsJsonAsync($"account/refresh-token", tokenDto);
+
+                    if (tokenResponse.IsSuccessStatusCode)
+                    {
+                        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
+                        await _localStorage.SetJwtTokenInfoAsync(authResponse);
+                        //TODO: implement logic to re-execute of the base request
+                    }
+                }
             }
         }
     }

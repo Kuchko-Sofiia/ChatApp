@@ -8,5 +8,7 @@ namespace ChatApp.Blazor.Services.Interfaces
         public Task<string> GetJwtTokenAsync();
         public Task SetJwtTokenAsync(string token);
         public Task RemoveJwtTokenInfoAsync();
+        public Task<string> GetRefreshTokenAsync();
+        public Task<DateTime> GetRefreshTokenExpTimeAsync();
     }
 }

@@ -111,7 +111,7 @@ namespace ChatApp.API.Controllers
 
         [Authorize]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
+        public async Task<ActionResult<AuthResponseDTO>> RefreshToken(TokenDTO tokenModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -130,15 +130,17 @@ namespace ChatApp.API.Controllers
                 return BadRequest("Invalid access token or refresh token");
             }
 
-            user.RefreshToken = _jwtTokenService.CreateToken(user);
+            user.RefreshToken = _jwtTokenService.CreateRefreshToken();
+            user.RefreshTokenExpiryTime = _jwtTokenService.GetRefreshTokenExpiryTime();
 
             await _userManager.UpdateAsync(user);
 
-            return new ObjectResult(new
+            return new AuthResponseDTO()
             {
-                accessToken = _jwtTokenService.CreateToken(user),
-                refreshToken = user.RefreshToken
-            });
+                Token = _jwtTokenService.CreateToken(user),
+                RefreshToken = user.RefreshToken,
+                RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
+            };
         }
 
         [Authorize]

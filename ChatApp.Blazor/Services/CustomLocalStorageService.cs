@@ -36,5 +36,14 @@ namespace ChatApp.Blazor.Services
             await _localStorageService.RemoveItemAsync("refreshToken");
             await _localStorageService.RemoveItemAsync("refreshTokenExpiryTime");
         }
+
+        public async Task<string> GetRefreshTokenAsync()
+        {
+            return await _localStorageService.GetItemAsync<string>("refreshToken");
+        }
+        public async Task<DateTime> GetRefreshTokenExpTimeAsync()
+        {
+            return await _localStorageService.GetItemAsync<DateTime>("refreshTokenExpiryTime");
+        }
     }
 }
