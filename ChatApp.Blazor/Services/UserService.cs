@@ -14,7 +14,17 @@ namespace ChatApp.Blazor.Services
         {
             _httpClient = httpClient;
         }
+        public async Task<UserInfoDTO> GetUserByIdAsync(string id)
+        {
+            var queryStringParam = new Dictionary<string, string?>()
+            {
+                ["userId"] = id
+            };
+            var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("user/getbyid", queryStringParam));
 
+            var data = await response.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return data;
+        }
         public async Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState)
         {
             var response = await _httpClient.PostAsJsonAsync("user/getpaginatedusers", tableState);
@@ -27,18 +37,6 @@ namespace ChatApp.Blazor.Services
 
             return paginatedData;
         }
-        public async Task<UserInfoDTO> GetUserByIdAsync(string id)
-        {
-            var queryStringParam = new Dictionary<string, string?>()
-            {
-                ["userId"] = id
-            };
-            var responce = await _httpClient.GetAsync(QueryHelpers.AddQueryString("user/getbyid", queryStringParam));
-
-            var data = await responce.Content.ReadFromJsonAsync<UserInfoDTO>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return data;
-        }
-
         public async Task EditUserAsync(UserInfoDTO userInfoDto)
         {
             var json = JsonSerializer.Serialize(userInfoDto);

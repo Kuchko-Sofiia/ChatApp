@@ -11,6 +11,7 @@ namespace ChatApp.DAL.Repositories.Interfaces
     public interface IRepository<T> where T : class
     {
         public Task<T> GetById(string id);
+        public Task<T> GetById(int id);
 
         public IQueryable<T> GetAll();
 

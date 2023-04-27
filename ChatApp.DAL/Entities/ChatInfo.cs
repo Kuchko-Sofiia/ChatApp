@@ -1,9 +1,10 @@
 ﻿namespace ChatApp.DAL.Entities
 {
-    public class ChatMembersCount
+    public class ChatInfo
     {
         public int ChatId { get; set; }
-        public string ChatName { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
         public int MembersCount { get; set; }
     }
 }

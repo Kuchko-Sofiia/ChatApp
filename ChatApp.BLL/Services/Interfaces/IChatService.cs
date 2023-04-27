@@ -7,6 +7,7 @@ namespace ChatApp.BLL.Services.Interfaces
     public interface IChatService
     {
         public Task CreateChat(Chat newChat, IEnumerable<string> newChatUsers);
-        public Task<PaginatedData<Chat>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState);
+        public Task<Chat> GetChatById(int id);
+        public Task<PaginatedData<ChatInfo>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState);
     }
 }

@@ -24,6 +24,7 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<ITestPageService, TestPageService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IChatService, ChatService>();
+builder.Services.AddTransient<IMessageService, MessageService>();
 
 builder.Services.AddHttpContextAccessor();
 

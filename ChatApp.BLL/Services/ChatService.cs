@@ -36,24 +36,16 @@ namespace ChatApp.BLL.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<PaginatedData<Chat>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState)
+        public async Task<Chat> GetChatById(int id)
         {
             var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
-            var chatMembersCountRepository = _unitOfWork.GetRepository<IChatMembersCountRepository>();
+            return await chatRepository.GetById(id);
+        }
 
-            var chats = chatRepository.GetAll();
-            var chatMembersCount = chatMembersCountRepository.GetAll();
-
-            chats = from chat in chats
-                    join count in chatMembersCount
-                    on chat.Id equals count.ChatId
-                    select new Chat
-                    {
-                        Id = chat.Id,
-                        Name = chat.Name,
-                        Description = chat.Description,
-                        MembersCount = count.MembersCount
-                    };
+        public async Task<PaginatedData<ChatInfo>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState)
+        {
+            var chatInfoRepository = _unitOfWork.GetRepository<IChatInfoRepository>();
+            var chats = chatInfoRepository.GetAll();
 
             if (!String.IsNullOrWhiteSpace(tableState.SearchText))
             {
@@ -78,7 +70,7 @@ namespace ChatApp.BLL.Services
                 _ => chats
             };
 
-            return await PaginatedData<Chat>.GetPaginatedDataAsync(
+            return await PaginatedData<ChatInfo>.GetPaginatedDataAsync(
                 source: chats,
                 pageIndex: tableState.PageIndex,
                 pageSize: tableState.PageSize);

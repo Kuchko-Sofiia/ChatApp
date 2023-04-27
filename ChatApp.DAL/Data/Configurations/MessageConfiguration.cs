@@ -14,7 +14,7 @@ namespace ChatApp.DAL.Data.Configurations
 
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
-            builder.Property(m => m.MessageText)
+            builder.Property(m => m.Text)
                 .HasMaxLength(int.MaxValue);
 
             builder.Property(m => m.SentTime)
@@ -27,19 +27,9 @@ namespace ChatApp.DAL.Data.Configurations
                 .WithMany()
                 .HasForeignKey(m => m.ChatId);
 
-            builder.HasOne(m => m.FromUser)
+            builder.HasOne(m => m.Sender)
                 .WithMany()
-                .HasForeignKey(m => m.FromUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(m => m.ToUser)
-                .WithMany()
-                .HasForeignKey(m => m.ToUserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(m => m.ForwardedFromUser)
-                .WithMany()
-                .HasForeignKey(m => m.ForwardedFromUserId)
+                .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

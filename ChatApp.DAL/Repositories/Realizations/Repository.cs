@@ -1,18 +1,13 @@
 ﻿using ChatApp.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChatApp.DAL.Repositories.Realizations
 {
     public abstract class Repository<T> : IRepository<T> where T : class
     {
         private readonly DbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private protected readonly DbSet<T> _dbSet;
 
         public Repository(DbContext context)
         {
@@ -24,7 +19,10 @@ namespace ChatApp.DAL.Repositories.Realizations
         {
             return await _dbSet.FindAsync(id);
         }
-
+        public async Task<T> GetById(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
         public IQueryable<T> GetAll()
         {
             return _dbSet.AsQueryable();

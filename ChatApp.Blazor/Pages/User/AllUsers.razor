@@ -77,7 +77,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<UserInfoDTO> tableRowClickEventArgs)
     {
-        NavigationManager.NavigateTo($"/users/user-details?userId={tableRowClickEventArgs.Item.Id}");
+        NavigationManager.NavigateTo($"/users/details?userId={tableRowClickEventArgs.Item.Id}");
     }
 
     private void OnSearch(string text)

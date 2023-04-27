@@ -26,6 +26,14 @@ namespace ChatApp.API.Mapping
                 .ForMember(dest => dest.HasNext, opt => opt.MapFrom(PaginatedData => PaginatedData.HasNextPage))
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src));
 
+            CreateMap<PaginatedData<ChatInfo>, PaginatedDataDTO<ChatDTO>>()
+                .ForMember(dest => dest.PageIndex, opt => opt.MapFrom(PaginatedData => PaginatedData.PageIndex))
+                .ForMember(dest => dest.TotalItems, opt => opt.MapFrom(PaginatedData => PaginatedData.TotalItems))
+                .ForMember(dest => dest.TotalPages, opt => opt.MapFrom(PaginatedData => PaginatedData.TotalPages))
+                .ForMember(dest => dest.HasPrevious, opt => opt.MapFrom(PaginatedData => PaginatedData.HasPreviousPage))
+                .ForMember(dest => dest.HasNext, opt => opt.MapFrom(PaginatedData => PaginatedData.HasNextPage))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src));
+
             CreateMap<LoginDTO, User>()
                 .ForMember(user => user.Email, opt => opt.MapFrom(loginDto => loginDto.Email))
                 .ForMember(user => user.PasswordHash, opt => opt.MapFrom(loginDto => loginDto.Password)).ReverseMap();
@@ -53,9 +61,18 @@ namespace ChatApp.API.Mapping
                 .ForMember(chat => chat.Description, opt => opt.MapFrom(chatDTO => chatDTO.Description))
                 .ForMember(chat => chat.MembersCount, opt => opt.MapFrom(chatDTO => chatDTO.MembersCount)).ReverseMap();
 
-            CreateMap<ChatDTO, ChatMembersCount>()
+            CreateMap<ChatDTO, ChatInfo>()
                 .ForMember(chat => chat.ChatId, opt => opt.MapFrom(chatDTO => chatDTO.Id))
                 .ForMember(chat => chat.MembersCount, opt => opt.MapFrom(chatDTO => chatDTO.MembersCount)).ReverseMap();
+
+            CreateMap<MessageDTO, Message>()
+                .ForMember(m => m.Id, opt => opt.MapFrom(messageDTO => messageDTO.Id))
+                .ForMember(m => m.Text, opt => opt.MapFrom(messageDTO => messageDTO.Text))
+                .ForMember(m => m.ChatId, opt => opt.MapFrom(messageDTO => messageDTO.ChatId))
+                .ForMember(m => m.Chat, opt => opt.MapFrom(messageDTO => messageDTO.Chat))
+                .ForMember(m => m.SenderId, opt => opt.MapFrom(messageDTO => messageDTO.SenderId))
+                .ForMember(m => m.Sender, opt => opt.MapFrom(messageDTO => messageDTO.Sender))
+                .ForMember(m => m.SentTime, opt => opt.MapFrom(messageDTO => messageDTO.SentTime)).ReverseMap();
         }
     }
 }

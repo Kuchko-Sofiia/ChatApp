@@ -10,7 +10,7 @@ namespace ChatApp.DAL.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<ChatMember> ChatMembers { get; set; }
-        public DbSet<ChatMembersCount> ChatMembersCount { get; set; }
+        public DbSet<ChatInfo> ChatMembersCount { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

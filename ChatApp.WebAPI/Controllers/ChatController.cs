@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ChatApp.BLL.Services;
 using ChatApp.BLL.Services.Interfaces;
 using ChatApp.DAL.Entities;
 using ChatApp.DTO;
@@ -29,6 +28,13 @@ namespace ChatApp.API.Controllers
             await _chatService.CreateChat(newChat, chatDTO.MembersId);
 
             return Ok(newChat);
+        }
+
+        [HttpGet("getbyid")]
+        public async Task<ActionResult<ChatDTO>> GetChatById([FromQuery] int chatId)
+        {
+            var chat = await _chatService.GetChatById(chatId);
+            return _mapper.Map<ChatDTO>(chat);
         }
 
         [HttpPost("getall")]

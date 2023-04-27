@@ -2,7 +2,7 @@
 
 namespace ChatApp.DAL.Repositories.Interfaces
 {
-    public interface IChatMembersCountRepository : IRepository<ChatMembersCount>
+    public interface IChatInfoRepository : IRepository<ChatInfo>
     {
 
     }

@@ -83,7 +83,7 @@
     <Build Include="dbo\Tables\ContactRequest.sql" />
     <Build Include="dbo\Tables\ChatMembers.sql" />
     <Build Include="dbo\Tables\BlockedUsers.sql" />
-    <Build Include="dbo\Views\ChatMembersCount.sql" />
+    <Build Include="dbo\Views\ChatInfo.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ChatApp.DBP.refactorlog" />

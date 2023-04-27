@@ -60,21 +60,21 @@
     {
         foreach (var user in _selectedUsers)
         {
-            _chatDTO.MembersId.Add(user.Id);
+            _chatDTO.MembersId?.Add(user.Id);
         }
         ChatService.CreateNewChat(_chatDTO);
 
         MudDialog.Close(DialogResult.Ok(true));
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            //TODO: get all user contacts
-            StateHasChanged();
-        }
-    }
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        //TODO: get all user contacts
+    //        StateHasChanged();
+    //    }
+    //}
 
     private async Task Search()
     {

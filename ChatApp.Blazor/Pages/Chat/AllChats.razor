@@ -47,7 +47,7 @@
 
 @code {
     private IEnumerable<ChatDTO>? _chatsList;
-    private MudTable<ChatDTO> table = null!;
+    private MudTable<ChatDTO>? table;
 
     private int totalItems;
     private string? searchString = null;
@@ -63,7 +63,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ChatDTO> tableRowClickEventArgs)
     {
-        NavigationManager.NavigateTo($"/chats/chat?chatId={tableRowClickEventArgs.Item.Id}");
+        NavigationManager.NavigateTo($"/chats/{tableRowClickEventArgs.Item.Id}");
     }
 
     private async Task CreateNewChat()
@@ -77,7 +77,7 @@
     private void OnSearch(string text)
     {
         searchString = text;
-        table.ReloadServerData();
+        table?.ReloadServerData();
     }
 
     public TableStateData<ChatSortProperty> GetTableState(TableState state)

@@ -39,8 +39,10 @@ namespace ChatApp.API.Controllers
         {
             if (userToEdit.Email != HttpContext.User.Identity.Name)
             {
-                var errors = new Dictionary<string, string>();
-                errors.Add("User update failed", "You can't change this user information.");
+                var errors = new Dictionary<string, string>
+                {
+                    { "User update failed", "You can't change this user information." }
+                };
                 return Unauthorized(errors);
             }
 
