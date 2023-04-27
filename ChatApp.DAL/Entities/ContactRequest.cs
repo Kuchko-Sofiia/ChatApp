@@ -7,10 +7,10 @@ namespace ChatApp.DAL.Entities
 {
     public partial class ContactRequest
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string FromUserId { get; set; }
         public string ToUserId { get; set; }
-        public string StatusId { get; set; }
+        public int StatusId { get; set; }
         public DateTime? RequestTime { get; set; }
     }
 }

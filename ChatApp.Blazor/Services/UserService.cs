@@ -17,7 +17,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task<PaginatedDataDTO<UserInfoDTO>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState)
         {
-            var response = await _httpClient.PostAsJsonAsync("user/getallusers", tableState);
+            var response = await _httpClient.PostAsJsonAsync("user/getpaginatedusers", tableState);
 
             response.EnsureSuccessStatusCode();
 

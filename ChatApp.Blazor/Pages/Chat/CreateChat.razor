@@ -2,9 +2,113 @@
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
+@inject IChatService ChatService
+@inject IUserService UserService
 
-<h3>CreateChat</h3>
+<MudDialog Style="width: 500px">
+    <TitleContent>
+        <MudText Typo="Typo.h6" Сlass="mb-1">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />
+            New chat:
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@_chatDTO" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="pb-5">
+                <MudTextField Label="Name" @bind-Value="_chatDTO.Name" For="@(() => _chatDTO.Name)" />
+                <MudTextField Label="Description" Class="mt-3" @bind-Value="_chatDTO.Description" For="@(() => _chatDTO.Description)" />
+            </div>
+            <MudChipSet AllClosable="true" OnClose="RemoveUser">
+                @foreach (var user in _selectedUsers)
+                {
+                    <MudChip Text="@user.Id">@user.FirstName @user.LastName</MudChip>
+                }
+            </MudChipSet>
+            <MudTextField Label="Search" Class="mt-3" @bind-Value="_searchState.SearchText" DebounceInterval=500 OnDebounceIntervalElapsed="Search" />
+            <MudList Clickable="true" Style="height:auto; max-height:250px; overflow:scroll">
+                @foreach (var user in _paginatedUsers)
+                {
+                    <MudListItem OnClick="() => SelectUser(user)">@user.Email</MudListItem>
+                }
+            </MudList>
+            <MudCardActions>
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                    Create chat
+                </MudButton>
+            </MudCardActions>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+    private TableStateData<UserInfoSortProperty> _searchState = new()
+    {
+        PageIndex = 1,
+        PageSize = 20,
+        SearchText = String.Empty,
+        SortDirection = SortDirectionData.None         
+    };
+    private ChatDTO _chatDTO = new ChatDTO()!;
+    private List<UserInfoDTO> _selectedUsers = new();
+    private List<UserInfoDTO> _paginatedUsers = new();
 
+    private void OnValidSubmit(EditContext context)
+    {
+        foreach (var user in _selectedUsers)
+        {
+            _chatDTO.MembersId.Add(user.Id);
+        }
+        ChatService.CreateNewChat(_chatDTO);
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //TODO: get all user contacts
+            StateHasChanged();
+        }
+    }
+
+    private async Task Search()
+    {
+        if (String.IsNullOrEmpty(_searchState.SearchText))
+        {
+            //TODO: get all user contacts
+        }
+        var paginatedData = await UserService.GetUsersAsync(_searchState);
+        _paginatedUsers = paginatedData.Items;
+    }
+
+    private void GetAllContacts()
+    {
+        //TODO: get all user contacts
+    }
+
+    private void SelectUser(UserInfoDTO user)
+    {
+        if (!_selectedUsers.Contains(user))
+            _selectedUsers.Add(user);
+    }
+
+    private void RemoveUser(MudChip chip)
+    {
+        var userId = chip.Text;
+        var userToRemove = _selectedUsers.FirstOrDefault(user => user.Id == userId);
+        if (userToRemove != null)
+        {
+            _selectedUsers.Remove(userToRemove);
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
 }

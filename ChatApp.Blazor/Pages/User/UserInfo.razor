@@ -1,4 +1,4 @@
-﻿@page "/users/user-details"
+﻿@page "/users/user-details/{userId}"
 @attribute [Authorize]
 @using System.Net.Http.Json
 @using ChatApp.DTO;
@@ -47,6 +47,7 @@
 @code {
     private UserInfoDTO? _userInfo;
     private bool _editEnabled;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

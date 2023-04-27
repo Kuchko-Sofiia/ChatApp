@@ -1,8 +1,17 @@
-﻿@page "/chats/{id:int}"
+﻿@page "/chats/chat"
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
+@using Microsoft.AspNetCore.WebUtilities;
+@inject NavigationManager NavigationManager
+@inject IChatService ChatService
+
+<h3>Hello, an @_chat?.Name is here!</h3>
 
 @code {
-
+    private ChatDTO? _chat = new ChatDTO()
+    {
+        Id = "3",
+        Name = "IChat"
+    };
 }

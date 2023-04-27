@@ -10,11 +10,10 @@ namespace ChatApp.DAL.Entities
         public string LastName { get; set; }
         //public DateTime DateOfBirth { get; set; }
         //public DateTime LastTimeActive { get; set; }
-        //public Role Role { get; set; }
         public string AccessToken { get; set; } 
         public string RefreshToken { get; set; } 
         public DateTime RefreshTokenExpiryTime { get; set; }
-        //public ICollection<Chat> Chats { get; set; }
+        public virtual ICollection<ChatMember> ChatMembers { get; set; }
         //public ICollection<User> Contacts { get; set; }
         //public ICollection<User> BlockedUsers { get; set; }
     }

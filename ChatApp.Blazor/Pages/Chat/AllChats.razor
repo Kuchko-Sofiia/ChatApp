@@ -2,9 +2,92 @@
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
+@inject IChatService ChatService
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
 
-<h3>AllChats</h3>
+<h3>Chats</h3>
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<ChatDTO>>>(ServerReload))"
+          OnRowClick="RowClickEvent"
+          T="ChatDTO"
+          Dense="true" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@((e) => CreateNewChat())">New chat</MudButton>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="Name" T="ChatDTO">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Description" T="ChatDTO">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.Name" HighlightedText="@searchString" />
+        </MudTd>
+        <MudTd DataLabel="Description">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.Description" HighlightedText="@searchString" />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 
 @code {
+    private IEnumerable<ChatDTO>? _chatsList;
+    private MudTable<ChatDTO>? table;
 
+    private int totalItems;
+    private string? searchString = null;
+
+    private async Task<TableData<ChatDTO>> ServerReload(TableState state)
+    {
+        var paginatedData = await ChatService.GetChatsAsync(GetTableState(state));
+
+        IEnumerable<ChatDTO> data = paginatedData.Items;
+        _chatsList = data;
+        return new TableData<ChatDTO>() { TotalItems = paginatedData.TotalItems, Items = _chatsList };
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<ChatDTO> tableRowClickEventArgs)
+    {
+        NavigationManager.NavigateTo($"/chats/chat?chatId={tableRowClickEventArgs.Item.Id}");
+    }
+
+    private async Task CreateNewChat()
+    {
+        var options = new DialogOptions { DisableBackdropClick = true };
+        var dialog = await DialogService.ShowAsync<CreateChat>("", options);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            table.ReloadServerData();
+        }
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table?.ReloadServerData();
+    }
+
+    public TableStateData<ChatSortProperty> GetTableState(TableState state)
+    {
+        return new TableStateData<ChatSortProperty>()
+            {
+                PageIndex = state.Page + 1,
+                PageSize = state.PageSize,
+                SearchText = searchString,
+                SortProperty = Enum.TryParse(state.SortLabel, out ChatSortProperty chatSortProperty) ? chatSortProperty : default,
+                SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
+            };
+    }
 }

@@ -12,35 +12,22 @@ namespace ChatApp.DAL.Repositories.Interfaces
     {
         public Task<T> GetById(string id);
 
-        IQueryable<T> GetAll();
+        public IQueryable<T> GetAll();
 
-        IEnumerable<T> GetAllSorted(Expression<Func<T, object>> orderBy);
+        public IEnumerable<T> GetAllSorted(Expression<Func<T, object>> orderBy);
 
-        IEnumerable<T> FindAll(Expression<Func<T, bool>>? predicate = default);
+        public IEnumerable<T> FindAll(Expression<Func<T, bool>>? predicate = default);
 
-        IEnumerable<T> FindAllWithRelated(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);
+        public IEnumerable<T> FindAllWithRelated(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);
 
-        IEnumerable<T> GetChunk(
-            int pageNumber, 
-            int pageSize, 
-            Expression<Func<T, object>>? orderBy = null, 
-            bool ascending = true,
-            params Expression<Func<T, object>>[] includeProperties);
+        public void Create(T entity);
 
-        IEnumerable<T> GetChunk(
-            Expression<Func<T, bool>> predicate,
-            int pageNumber,
-            int pageSize,
-            Expression<Func<T, object>>? orderBy = null,
-            bool ascending = true,
-            params Expression<Func<T, object>>[] includeProperties);
+        public void CreateMultiple(IEnumerable<T> entities);
 
-        void Create(T entity);
+        public void Update(T entity);
 
-        void Update(T entity);
+        public void Delete(T entity);
 
-        void Delete(T entity);
-
-        void Attach(T entity);
+        public void Attach(T entity);
     }
 }

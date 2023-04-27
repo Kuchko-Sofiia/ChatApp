@@ -50,40 +50,14 @@ namespace ChatApp.DAL.Repositories.Realizations
             return query.AsEnumerable();
         }
 
-        public IEnumerable<T> GetChunk(int pageNumber, int pageSize, Expression<Func<T, object>>? orderBy = null, bool ascending = true, params Expression<Func<T, object>>[] includeProperties)
-        {
-            var query = _dbSet.AsQueryable();
-            if (includeProperties != null)
-            {
-                foreach (var includeProperty in includeProperties)
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
-            if (orderBy != null)
-            {
-                query = ascending ? query.OrderBy(orderBy) : query.OrderByDescending(orderBy);
-            }
-            return query.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsEnumerable();
-        }
-
-        public IEnumerable<T> GetChunk(Expression<Func<T, bool>> predicate, int pageNumber, int pageSize, Expression<Func<T, object>>? orderBy = null, bool ascending = true, params Expression<Func<T, object>>[] includeProperties)
-        {
-            var query = _dbSet.Where(predicate);
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-            if (orderBy != null)
-            {
-                query = ascending ? query.OrderBy(orderBy) : query.OrderByDescending(orderBy);
-            }
-            return query.Skip((pageNumber - 1) * pageSize).Take(pageSize).AsEnumerable();
-        }
-
         public void Create(T entity)
         {
-            _dbSet.Add(entity);
+            _dbSet.AddAsync(entity);
+        }
+
+        public void CreateMultiple(IEnumerable<T> entities)
+        {
+            _dbSet.AddRange(entities);
         }
 
         public void Update(T entity)

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[BlockedUsers]
 (
-	[Id] NVARCHAR(450) NOT NULL PRIMARY KEY, 
+	[Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY, 
     [UserId] NVARCHAR(450) NULL, 
     [BlockedUserId] NVARCHAR(450) NULL, 
     CONSTRAINT [FK_BlockedUsers_ToTable] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers]([Id]), 

@@ -1,6 +1,4 @@
 using ChatApp.API.Extensions;
-using ChatApp.DAL.Extentions;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
