@@ -1,4 +1,5 @@
 using ChatApp.API.Extensions;
+using ChatApp.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,5 +35,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();

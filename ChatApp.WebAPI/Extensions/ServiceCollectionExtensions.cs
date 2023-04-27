@@ -14,7 +14,6 @@ using ChatApp.DAL.Repositories.Realizations;
 using ChatApp.DAL.UnitOfWork;
 using ChatApp.API.Mapping;
 
-
 namespace ChatApp.API.Extensions
 {
     public static class ServiceCollectionExtensions
@@ -56,11 +55,6 @@ namespace ChatApp.API.Extensions
                 .AddEntityFrameworkStores<ChatAppDbContext>()
                 .AddDefaultTokenProviders();
 
-            //services.AddAutoMapper(config =>
-            //{
-            //    config.AddProfile(new AutoMapperProfile(AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic).ToArray()));
-            //});
-
             services.AddAutoMapper(typeof(MappingProfiles));
 
             //Repositories & Unit of Work
@@ -76,6 +70,9 @@ namespace ChatApp.API.Extensions
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IChatService, ChatService>();
             services.AddTransient<IJwtTokenService, JwtTokenService>();
+
+            //SignalR
+            services.AddSignalR();
         }
 
         public static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)
