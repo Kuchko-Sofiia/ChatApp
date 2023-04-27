@@ -21,6 +21,7 @@
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="Name" T="ChatDTO">Name</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="Description" T="ChatDTO">Description</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="MembersCount" T="ChatDTO">Members</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">
@@ -28,6 +29,9 @@
         </MudTd>
         <MudTd DataLabel="Description">
             <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.Description" HighlightedText="@searchString" />
+        </MudTd>
+        <MudTd DataLabel="MembersCount">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.MembersCount.ToString()" HighlightedText="@searchString" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>
@@ -43,7 +47,7 @@
 
 @code {
     private IEnumerable<ChatDTO>? _chatsList;
-    private MudTable<ChatDTO>? table;
+    private MudTable<ChatDTO> table = null!;
 
     private int totalItems;
     private string? searchString = null;
@@ -64,30 +68,27 @@
 
     private async Task CreateNewChat()
     {
-        var options = new DialogOptions { DisableBackdropClick = true };
-        var dialog = await DialogService.ShowAsync<CreateChat>("", options);
+        var dialog = await DialogService.ShowAsync<CreateChat>("", new DialogOptions { DisableBackdropClick = true });
         var result = await dialog.Result;
         if (!result.Canceled)
-        {
-            table.ReloadServerData();
-        }
+            await table.ReloadServerData();
     }
 
     private void OnSearch(string text)
     {
         searchString = text;
-        table?.ReloadServerData();
+        table.ReloadServerData();
     }
 
     public TableStateData<ChatSortProperty> GetTableState(TableState state)
     {
         return new TableStateData<ChatSortProperty>()
-            {
-                PageIndex = state.Page + 1,
-                PageSize = state.PageSize,
-                SearchText = searchString,
-                SortProperty = Enum.TryParse(state.SortLabel, out ChatSortProperty chatSortProperty) ? chatSortProperty : default,
-                SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
-            };
+        {
+            PageIndex = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchText = searchString,
+            SortProperty = Enum.TryParse(state.SortLabel, out ChatSortProperty chatSortProperty) ? chatSortProperty : default,
+            SortDirection = Enum.TryParse(state.SortDirection.ToString(), out SortDirectionData sortDirection) ? sortDirection : (SortDirectionData?)null
+        };
     }
 }

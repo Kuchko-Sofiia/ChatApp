@@ -12,6 +12,7 @@
     {
         None,
         Name,
-        Description
+        Description,
+        MembersCount
     }
 }

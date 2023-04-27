@@ -9,7 +9,7 @@ namespace ChatApp.DAL.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ChatMembersCount> builder)
         {
-            builder.ToTable("ChatUserCount");
+            builder.ToTable("ChatMembersCount");
             builder.HasNoKey();
         }
     }

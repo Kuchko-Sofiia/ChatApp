@@ -39,7 +39,21 @@ namespace ChatApp.BLL.Services
         public async Task<PaginatedData<Chat>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState)
         {
             var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
+            var chatMembersCountRepository = _unitOfWork.GetRepository<IChatMembersCountRepository>();
+
             var chats = chatRepository.GetAll();
+            var chatMembersCount = chatMembersCountRepository.GetAll();
+
+            chats = from chat in chats
+                    join count in chatMembersCount
+                    on chat.Id equals count.ChatId
+                    select new Chat
+                    {
+                        Id = chat.Id,
+                        Name = chat.Name,
+                        Description = chat.Description,
+                        MembersCount = count.MembersCount
+                    };
 
             if (!String.IsNullOrWhiteSpace(tableState.SearchText))
             {
@@ -54,29 +68,18 @@ namespace ChatApp.BLL.Services
                 ChatSortProperty.None => chats,
                 ChatSortProperty.Name => (tableState.SortDirection == SortDirectionData.Ascending)
                     ? chats.OrderBy(c => c.Name)
-                    : chats.OrderByDescending(u => u.Name),
+                    : chats.OrderByDescending(c => c.Name),
                 ChatSortProperty.Description => (tableState.SortDirection == SortDirectionData.Ascending)
-                    ? chats.OrderBy(u => u.Description)
-                    : chats.OrderByDescending(u => u.Description),
+                    ? chats.OrderBy(c => c.Description)
+                    : chats.OrderByDescending(c => c.Description),
+                ChatSortProperty.MembersCount => (tableState.SortDirection == SortDirectionData.Ascending)
+                    ? chats.OrderBy(c => c.MembersCount)
+                    : chats.OrderByDescending(c => c.MembersCount),
                 _ => chats
             };
 
-            var chatMembersCountRepository = _unitOfWork.GetRepository<IChatMembersCountRepository>();
-            var chatMembersCount = chatMembersCountRepository.GetAll();
-
-            var chatsWithCount = from chat in chats
-                            join count in chatMembersCount
-                            on chat.Id equals count.ChatId
-                            select new Chat
-                            {
-                                Id = chat.Id,
-                                Name = chat.Name,
-                                Description = chat.Description,
-                                MembersCount = count.MembersCount
-                            };
-
             return await PaginatedData<Chat>.GetPaginatedDataAsync(
-                source: chatsWithCount,
+                source: chats,
                 pageIndex: tableState.PageIndex,
                 pageSize: tableState.PageSize);
         }
