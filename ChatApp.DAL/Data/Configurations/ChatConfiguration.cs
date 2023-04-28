@@ -19,6 +19,11 @@ namespace ChatApp.DAL.Data.Configurations
                    .WithOne(x => x.Chat)
                    .HasForeignKey(x => x.ChatId)
                    .IsRequired();
+
+            builder.HasMany(u => u.Avatars)
+                   .WithOne(a => a.Chat)
+                   .HasForeignKey(a => a.ChatId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

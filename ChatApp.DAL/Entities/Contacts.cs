@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.DAL.Entities
 {
-    public partial class Contacts
+    public class Contacts 
     {
         public int Id { get; set; }
         public string UserId { get; set; }

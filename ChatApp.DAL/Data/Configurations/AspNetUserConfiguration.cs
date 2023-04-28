@@ -30,6 +30,11 @@ namespace ChatApp.DAL.Data.Configurations
                    .WithOne(c => c.User)
                    .HasForeignKey(c => c.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(u => u.Avatars)
+                   .WithOne(a => a.User)
+                   .HasForeignKey(a => a.UserId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

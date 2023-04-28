@@ -1,8 +1,7 @@
 ﻿namespace ChatApp.DAL.Entities
 {
-    public class Message
+    public class Message : IdentifiableEntity
     {
-        public int Id { get; set; }
         public string Text { get; set; } = null!;
         public int ChatId { get; set; }
         public string? SenderId { get; set; }
