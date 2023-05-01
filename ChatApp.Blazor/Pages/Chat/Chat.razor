@@ -44,11 +44,8 @@
 </div>
 
 @code {
-    [Parameter] 
-    public int Id { get; set; }
-
-    [CascadingParameter] 
-    private HubConnection? _hubConnection { get; set; }
+    [Parameter] public int Id { get; set; }
+    private HubConnection _hubConnection { get; set; }
 
     private AuthenticationState? _authState;
     private UserDTO _currentUser = new UserDTO();
