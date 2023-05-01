@@ -8,10 +8,7 @@ namespace ChatApp.API.Hubs
         public async Task SendMessageAsync(MessageDTO message)
         {
             await Clients.All.SendAsync("ReceiveMessage", message);
-        }
-        public async Task ChatNotificationAsync(string message, string receiverUserId, string senderUserId)
-        {
-            await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
+            //await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
         }
     }
 }

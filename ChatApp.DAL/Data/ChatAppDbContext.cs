@@ -7,11 +7,11 @@ namespace ChatApp.DAL.Data
 {
     public class ChatAppDbContext : IdentityDbContext<User>
     {
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<Avatar> Avatars { get; set; }
-        public DbSet<Chat> Chats { get; set; }
-        public DbSet<ChatMember> ChatMembers { get; set; }
-        public DbSet<ChatInfo> ChatInfo { get; set; }
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<Avatar> Avatars { get; set; } = null!;
+        public DbSet<Chat> Chats { get; set; } = null!;
+        public DbSet<ChatMember> ChatMembers { get; set; } = null!;
+        public DbSet<ChatInfo> ChatInfo { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

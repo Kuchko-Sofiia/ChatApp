@@ -2,36 +2,39 @@
 
 @using ChatApp.Blazor.Services.Interfaces;
 @using ChatApp.DTO.Authentication;
+@using ChatApp.DTO.Validators;
 
 @inject IAccountService AccountService
 @inject NavigationManager NavigationManager
 
-<h3>Login</h3>
-<hr />
-
-<EditForm Model="@loginDto" OnValidSubmit="LoginAsync">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="form-group" style="margin-bottom: 15px">
-        <label for="email">Email</label>
-        <InputText id="email" class="form-control" @bind-Value="loginDto.Email" />
-    </div>
-    <div class="form-group" style="margin-bottom: 15px">
-        <label for="password">Password</label>
-        <InputText type="password" id="password" class="form-control" @bind-Value="loginDto.Password" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Login</button>
-</EditForm>
+<div class="d-flex align-items-center" style="flex-direction:column;">
+    <MudCard Class="p-4">
+        <h3>Login</h3>
+        <hr style="margin:0px" />
+        <MudForm Model="@_loginDto" @ref="@_form" Validation="@(new LoginDTOValidator().ValidateValue)" ValidationDelay="150" style="min-width:350px; width:500px">
+            <MudCardContent>
+                <MudTextField Immediate="true" @bind-Value="_loginDto.Email" For="@(() => _loginDto.Email)" Label="Email" />
+                <MudTextField Immediate="true" @bind-Value="_loginDto.Password" For="@(() => _loginDto.Password)" Label="Password" InputType="InputType.Password" />
+            </MudCardContent>
+        </MudForm>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await LoginAsync())">Login</MudButton>
+        </MudCardActions>
+    </MudCard>
+</div>
 
 @code {
-    private LoginDTO loginDto= new LoginDTO();
+    private MudForm _form = null!;
+    private LoginDTO _loginDto= new LoginDTO();
 
     private async Task LoginAsync()
     {
-        await AccountService.Login(loginDto);
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            await AccountService.Login(_loginDto);
 
-        NavigationManager.NavigateTo("/testpage");
+            NavigationManager.NavigateTo("/testpage");
+        }
     }
 }

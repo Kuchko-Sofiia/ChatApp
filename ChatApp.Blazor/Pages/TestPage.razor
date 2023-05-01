@@ -1,6 +1,8 @@
-﻿@using ChatApp.Blazor.Services.Interfaces;
+﻿@page "/testpage"
+@attribute [Authorize]
 
-@page "/testpage"
+@using ChatApp.Blazor.Services.Interfaces;
+
 @inject ITestPageService TestPageService
 
 <h3>TestPage</h3>

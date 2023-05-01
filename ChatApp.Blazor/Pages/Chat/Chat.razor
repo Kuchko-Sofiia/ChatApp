@@ -1,29 +1,24 @@
 ﻿@page "/chats/{id:int}"
-@using System.Net.Http.Json
-@using ChatApp.DTO;
-@using ChatApp.Blazor.Services.Interfaces;
-@using Microsoft.AspNetCore.WebUtilities;
+@attribute [Authorize]
+
 @using System.Security.Claims;
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.WebUtilities;
+@using ChatApp.Blazor.Services.Interfaces;
+@using ChatApp.DTO;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
+@inject IMessageService MessageService
 @inject IChatService ChatService
 @inject IUserService UserService
-@inject IMessageService MessageService
-@inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="d-flex flex-grow-1 flex-row">
     <MudPaper Elevation="25" Class="py-4 flex-grow-1">
         <MudToolBar Dense="true">
-            @if (string.IsNullOrEmpty(_chat?.Name))
-            {
-                <MudIcon Icon="@Icons.Material.Outlined.Person" Style="margin-right:10px"></MudIcon>
-                <MudText Typo="Typo.h6">chat</MudText>
-            }
-            else
-            {
-                <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px"></MudIcon>
-                <MudText Typo="Typo.h6">@_chat?.Name</MudText>
-            }
+            <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px"></MudIcon>
+            <MudText Typo="Typo.h6">@(_chat?.Name ?? "chat")</MudText>
         </MudToolBar>
         <div class="d-flex flex-column-reverse p-4" style="max-height:65vh;min-height:65vh; overflow-y: auto;">
             @foreach (var message in _messages)
@@ -34,51 +29,45 @@
                     </div>
                     <div class="mx-2">
                         <MudText Typo="Typo.body1">@message.Sender?.FirstName @message.Sender?.LastName</MudText>
-                        @*<MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.SentTime.ToString("dd MMM, yyyy hh:mm tt")</MudText>*@
+                        <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.SentTime.ToString("dd MMM, yyyy hh:mm tt")</MudText>
                         <MudText Typo="Typo.body2" Style=" padding: 10px;background-color: var(--mud-palette-background-grey);border-radius: 5px;margin-top:5px">@message.Text</MudText>
                     </div>
                 </div>
             }
         </div>
         <MudPaper Elevation="25" Class="d-flex flex-row px-2 mx-4" Style="">
-            <MudTextField T="string" Placeholder="Write a message..." DisableUnderLine="true" Class="mt-n2 mx-4"
-                          @bind-Value="_currentMessage.Text" For="@(()=> _currentMessage.Text)" />
+            <MudTextField T="string" Placeholder="Write a message..." DisableUnderLine="true" Class="mt-n2 mx-4" @bind-Value="_currentMessage.Text" />
+
             <MudButton OnClick="SendMessage" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Dark" ButtonType="ButtonType.Button">Send</MudButton>
         </MudPaper>
     </MudPaper>
 </div>
 
 @code {
-    [Parameter] public int Id { get; set; }
-    public HubConnection _hubConnection { get; set; } = null!;
+    [Parameter] 
+    public int Id { get; set; }
 
-    private List<MessageDTO> _messages = new List<MessageDTO>();
-    private MessageDTO _currentMessage = new MessageDTO();
-    private UserDTO _currentUser = new UserDTO();
+    [CascadingParameter] 
+    private HubConnection? _hubConnection { get; set; }
 
-    private string _currentUserId = null!;
-    private ChatDTO? _chat = new ChatDTO();
     private AuthenticationState? _authState;
+    private UserDTO _currentUser = new UserDTO();
+    private string _currentUserId = null!;
+
+    private ChatDTO? _chat = new ChatDTO();
+    private MessageDTO _currentMessage = new MessageDTO();
+    private List<MessageDTO> _messages = new List<MessageDTO>();
 
     protected override async Task OnInitializedAsync()
     {
-        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _chat = await ChatService.GetChatAsync(Id);
         _messages = await MessageService.GetAllMessagesAsync(Id);
+
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
         _currentUser = await UserService.GetUserByIdAsync(_currentUserId);
 
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{Configuration.GetSection("AppBase").Value}chathub")
-            .Build();
-
-        _hubConnection.On<MessageDTO>("ReceiveMessage", async message =>
-        {
-            _messages.Insert(0, message);
-            await InvokeAsync(StateHasChanged);
-        });
-
-        await _hubConnection.StartAsync();
+        await InitializeHubConnection();
     }
 
     private async Task SendMessage()
@@ -92,9 +81,27 @@
             await MessageService.CreateNewMessage(_currentMessage);
 
             _currentMessage.Sender = _currentUser;
-            await _hubConnection.SendAsync("SendMessageAsync", _currentMessage);
+            await _hubConnection!.SendAsync("SendMessageAsync", _currentMessage);
 
             _currentMessage.Text = String.Empty;
+        }
+    }
+
+    private async Task InitializeHubConnection()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{Configuration.GetSection("AppBase").Value}chathub")
+            .Build();
+
+        _hubConnection.On<MessageDTO>("ReceiveMessage", async message =>
+        {
+            _messages.Insert(0, message);
+            await InvokeAsync(StateHasChanged);
+        });
+
+        if (_hubConnection.State == HubConnectionState.Disconnected)
+        {
+            await _hubConnection.StartAsync();
         }
     }
 }

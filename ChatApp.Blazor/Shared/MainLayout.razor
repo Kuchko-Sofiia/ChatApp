@@ -69,8 +69,7 @@
     private async Task NavigateToProfile()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        //var userId2 = authState.User.Claims.ResultView
-        var userId = authState.User.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"); // Assuming that the user ID is stored in the "sub" claim
-        NavigationManager.NavigateTo($"/user-details?userId={userId}");
+        var userId = authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
+        NavigationManager.NavigateTo($"/users/details?userId={userId}");
     }
 }

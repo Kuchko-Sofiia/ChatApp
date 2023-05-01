@@ -1,7 +1,13 @@
 ﻿@page "/chats/new"
+@attribute [Authorize]
+
 @using System.Net.Http.Json
 @using ChatApp.DTO;
 @using ChatApp.Blazor.Services.Interfaces;
+@using ChatApp.DTO.Validators;
+@using System.Security.Claims;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IChatService ChatService
 @inject IUserService UserService
 
@@ -13,11 +19,10 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <EditForm Model="@_chatDTO" OnValidSubmit="OnValidSubmit">
-            <DataAnnotationsValidator />
+        <MudForm Model="@_chatDTO" @ref="_form" Validation="@(new ChatDTOValidator().ValidateValue)" ValidationDelay="150">
             <div class="pb-5">
-                <MudTextField Label="Name" @bind-Value="_chatDTO.Name" For="@(() => _chatDTO.Name)" />
-                <MudTextField Label="Description" Class="mt-3" @bind-Value="_chatDTO.Description" For="@(() => _chatDTO.Description)" />
+                <MudTextField Immediate="true" @bind-Value="_chatDTO.Name" For="@(() => _chatDTO.Name)" Label="Name" />
+                <MudTextField Immediate="true" @bind-Value="_chatDTO.Description" For="@(() => _chatDTO.Description)" Class="mt-3" Label="Description" />
             </div>
             <MudChipSet AllClosable="true" OnClose="RemoveUser">
                 @foreach (var user in _selectedUsers)
@@ -34,61 +39,74 @@
             </MudList>
             <MudCardActions>
                 <MudButton OnClick="Cancel">Cancel</MudButton>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await CreateChatAsync())">
                     Create chat
                 </MudButton>
             </MudCardActions>
-        </EditForm>
+        </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = null!;
+
+    private MudForm _form = null!;
+    private ChatDTO _chatDTO = new ChatDTO()!;
+    private UserDTO _currentUser = null!;
+    private List<UserDTO> _selectedUsers = new();
+    private List<UserDTO> _paginatedUsers = new();
+
     private PaginatedDataStateDTO<UserInfoSortProperty> _searchState = new()
     {
         PageIndex = 1,
         PageSize = 20,
         SearchText = String.Empty,
-        SortDirection = SortDirectionData.None         
+        SortDirection = SortDirectionData.None
     };
-    private ChatDTO _chatDTO = new ChatDTO()!;
-    private List<UserDTO> _selectedUsers = new();
-    private List<UserDTO> _paginatedUsers = new();
 
-    private void OnValidSubmit(EditContext context)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        foreach (var user in _selectedUsers)
+        if (firstRender)
         {
-            _chatDTO.MembersId?.Add(user.Id);
+            _currentUser = await GetCurrentUser();
+            _selectedUsers.Add(_currentUser);
+            StateHasChanged();
         }
-        ChatService.CreateNewChat(_chatDTO);
-
-        MudDialog.Close(DialogResult.Ok(true));
     }
 
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        //TODO: get all user contacts
-    //        StateHasChanged();
-    //    }
-    //}
+    private async Task CreateChatAsync()
+    {
+        await _form.Validate();
+
+        if (_form.IsValid)
+        {
+            foreach (var user in _selectedUsers)
+            {
+                _chatDTO.MembersId?.Add(user.Id);
+            }
+            await ChatService.CreateNewChat(_chatDTO);
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
 
     private async Task Search()
     {
         if (String.IsNullOrEmpty(_searchState.SearchText))
         {
-            //TODO: get all user contacts
+            _paginatedUsers.Clear();
         }
         var paginatedData = await UserService.GetUsersAsync(_searchState);
         _paginatedUsers = paginatedData.Items;
     }
 
-    private void GetAllContacts()
+    private async Task<UserDTO> GetCurrentUser()
     {
-        //TODO: get all user contacts
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var id = authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
+
+        return await UserService.GetUserByIdAsync(id);
     }
 
     private void SelectUser(UserDTO user)
@@ -100,11 +118,12 @@
     private void RemoveUser(MudChip chip)
     {
         var userId = chip.Text;
+        if (userId ==_currentUser.Id)
+            return;
+
         var userToRemove = _selectedUsers.FirstOrDefault(user => user.Id == userId);
         if (userToRemove != null)
-        {
             _selectedUsers.Remove(userToRemove);
-        }
     }
 
     private void Cancel()

@@ -53,7 +53,7 @@ namespace ChatApp.API.Extensions
                 opts.User.RequireUniqueEmail = true;
                 opts.Password.RequiredLength = 8;
                 opts.Password.RequireNonAlphanumeric = false;
-                opts.Password.RequireDigit = false;
+                opts.Password.RequireDigit = true;
             })
                 .AddEntityFrameworkStores<ChatAppDbContext>()
                 .AddDefaultTokenProviders();

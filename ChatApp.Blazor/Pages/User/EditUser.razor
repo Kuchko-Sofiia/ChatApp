@@ -1,11 +1,14 @@
 ﻿@page "/users/edit-user"
-@using System.Net.Http.Json
-@using ChatApp.DTO;
-@using ChatApp.Blazor.Services.Interfaces;
-@using Microsoft.AspNetCore.WebUtilities;
+@attribute [Authorize]
+
 @using System.ComponentModel.DataAnnotations;
-@inject IUserService UserService
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.WebUtilities;
+@using ChatApp.Blazor.Services.Interfaces;
+@using ChatApp.DTO;
+
 @inject NavigationManager NavigationManager
+@inject IUserService UserService
 
 <div class="d-flex justify-content-center justify-items-center">
     <MudGrid Style="max-width:800px">
