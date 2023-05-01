@@ -42,7 +42,7 @@ namespace ChatApp.BLL.Services
             return await chatRepository.GetById(id);
         }
 
-        public async Task<PaginatedData<ChatInfo>> GetPaginatedChatsAsync(TableStateData<ChatSortProperty> tableState)
+        public async Task<PaginatedData<ChatInfo>> GetPaginatedChatsAsync(PaginatedDataStateDTO<ChatSortProperty> tableState)
         {
             var chatInfoRepository = _unitOfWork.GetRepository<IChatInfoRepository>();
             var chats = chatInfoRepository.GetAll();

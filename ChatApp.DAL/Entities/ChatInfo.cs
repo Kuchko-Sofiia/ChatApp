@@ -6,5 +6,6 @@
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public int MembersCount { get; set; }
+        public Avatar? Avatar { get; set; }
     }
 }

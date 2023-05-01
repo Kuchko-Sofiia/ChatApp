@@ -11,6 +11,7 @@ namespace ChatApp.DAL.Data.Configurations
             builder.ToTable("Avatars");
 
             builder.HasKey(a => a.Id);
+            builder.Property(a => a.Id).ValueGeneratedOnAdd();
 
             builder.Property(a => a.FileName)
                 .HasMaxLength(255)

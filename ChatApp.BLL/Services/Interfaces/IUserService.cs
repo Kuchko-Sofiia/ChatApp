@@ -7,7 +7,8 @@ namespace ChatApp.BLL.Services.Interfaces
     public interface IUserService
     {
         public Task<User> GetUserById(string id);
-        public Task<PaginatedData<User>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState);
-        public Task<bool> EditUser(UserInfoDTO userToEdit);
+        public Task<PaginatedData<User>> GetUsersAsync(PaginatedDataStateDTO<UserInfoSortProperty> tableState);
+        public Task<bool> EditUser(UserDTO userToEdit);
+        public Task AddAvatarAsync(Avatar avatar);
     }
 }

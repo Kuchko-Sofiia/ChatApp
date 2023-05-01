@@ -6,9 +6,9 @@
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<UserInfoDTO>>>(ServerReload))"
+<MudTable ServerData="@(new Func<TableState, Task<TableData<UserDTO>>>(ServerReload))"
           OnRowClick="RowClickEvent"
-          T="UserInfoDTO"
+          T="UserDTO"
           Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">All Users</MudText>
@@ -17,13 +17,25 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="UserName" T="UserInfoDTO">UserName</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="Email" T="UserInfoDTO">Email</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="FirstName" T="UserInfoDTO">First Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="LastName" T="UserInfoDTO">Last Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortLabel="PhoneNumber" T="UserInfoDTO">Phone Number</MudTableSortLabel></MudTh>
+        <MudTh>Avatar</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="UserName" T="UserDTO">UserName</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Email" T="UserDTO">Email</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="FirstName" T="UserDTO">First Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="LastName" T="UserDTO">Last Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="DateOfBirth" T="UserDTO">Date Of Birth</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="PhoneNumber" T="UserDTO">Phone Number</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="Avatar">
+            @if (@context.Avatars != null)
+            {
+                <MudAvatar Color="Color.Secondary" Image="@context.Avatars[^1].Content" />
+            }
+            else
+            {
+                <MudAvatar Color="Color.Secondary">@context.UserName.Substring(0, 2).ToUpper()</MudAvatar>
+            }
+        </MudTd>
         <MudTd DataLabel="UserName">
             <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.UserName"HighlightedText="@searchString"/>
         </MudTd>
@@ -35,6 +47,9 @@
         </MudTd>
         <MudTd DataLabel="Last Name">
             <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.LastName" HighlightedText="@searchString" />
+        </MudTd>
+        <MudTd DataLabel="Date Of Birth">
+            <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.DateOfBirth?.ToString("d")" HighlightedText="@searchString" />
         </MudTd>
         <MudTd DataLabel="Phone Number">
             <MudHighlighter Class="mud-primary-text" Style="background-color:transparent;font-weight:bold;display:contents" Text="@context.PhoneNumber" HighlightedText="@searchString" />
@@ -52,14 +67,13 @@
 </MudTable>
 
 @code {
-    private IEnumerable<UserInfoDTO>? _usersList;
-    private MudTable<UserInfoDTO>? table;
+    private IEnumerable<UserDTO>? _usersList;
+    private MudTable<UserDTO>? table;
 
-    private int totalItems;
     private string? searchString = null;
     //private bool _firstRender = true; 
 
-    private async Task<TableData<UserInfoDTO>> ServerReload(TableState state)
+    private async Task<TableData<UserDTO>> ServerReload(TableState state)
     {
         //if (_firstRender)
         //{
@@ -70,12 +84,12 @@
         var paginatedData = await UserService.GetUsersAsync(GetTableState(state));
         //GenerateUserNavigationUrl(state);
 
-        IEnumerable<UserInfoDTO> data = paginatedData.Items;
+        IEnumerable<UserDTO> data = paginatedData.Items;
         _usersList = data;
-        return new TableData<UserInfoDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
+        return new TableData<UserDTO>() { TotalItems = paginatedData.TotalItems, Items = _usersList };
     }
 
-    private void RowClickEvent(TableRowClickEventArgs<UserInfoDTO> tableRowClickEventArgs)
+    private void RowClickEvent(TableRowClickEventArgs<UserDTO> tableRowClickEventArgs)
     {
         NavigationManager.NavigateTo($"/users/details?userId={tableRowClickEventArgs.Item.Id}");
     }
@@ -86,9 +100,9 @@
         table?.ReloadServerData();
     }
 
-    public TableStateData<UserInfoSortProperty> GetTableState(TableState state)
+    public PaginatedDataStateDTO<UserInfoSortProperty> GetTableState(TableState state)
     {
-        return new TableStateData<UserInfoSortProperty>()
+        return new PaginatedDataStateDTO<UserInfoSortProperty>()
             {
                 PageIndex = state.Page + 1,
                 PageSize = state.PageSize,

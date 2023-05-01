@@ -25,6 +25,12 @@
     </div>
 
     <div class="form-group mb-5">
+        <label for="DateOfBirth">Date Of Birth</label>
+        <InputDate type="date" id="dateOfBirth" class="form-control" @bind-Value="signInDto.DateOfBirth" />
+        <ValidationMessage For="@(() => signInDto.DateOfBirth)" />
+    </div>
+
+    <div class="form-group mb-5">
         <label for="password">Password</label>
         <InputText type="password" id="password" class="form-control" @bind-Value="signInDto.Password" />
         <ValidationMessage For="@(() => signInDto.Password)" />

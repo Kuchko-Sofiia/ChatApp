@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.DTO
 {
-    public class TableStateData<T> where T : Enum
+    public class PaginatedDataStateDTO<T> where T : Enum
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }

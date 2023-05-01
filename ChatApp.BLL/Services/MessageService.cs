@@ -27,11 +27,11 @@ namespace ChatApp.BLL.Services
         public async Task<List<Message>> GetAllMessagesAsync(int chatId)
         {
             var messageRepository = _unitOfWork.GetRepository<IMessageRepository>();
-            var messages = await messageRepository.GetAllByChatId(chatId);
+            var messages = messageRepository.GetAllByChatId(chatId);
             return messages.ToList();
         }
 
-        public async Task<PaginatedData<Message>> GetPaginatedMessagesAsync(TableStateData<MessageSortProperty> tableState)
+        public async Task<PaginatedData<Message>> GetPaginatedMessagesAsync(PaginatedDataStateDTO<MessageSortProperty> tableState)
         {
             var messageRepository = _unitOfWork.GetRepository<IMessageRepository>();
             var messages = messageRepository.GetAll();

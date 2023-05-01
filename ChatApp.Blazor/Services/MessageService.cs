@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.WebUtilities;
 using ChatApp.DTO;
 using System.Text.Json;
+using System.Net;
 
 namespace ChatApp.Blazor.Services
 {
@@ -16,7 +17,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task CreateNewMessage(MessageDTO messageDto)
         {
-            await _httpClient.PostAsJsonAsync("message/create", messageDto);
+            await _httpClient.PostAsJsonAsync("api/message/create", messageDto);
         }
 
         public async Task<List<MessageDTO>> GetAllMessagesAsync(int chatId)
@@ -25,13 +26,13 @@ namespace ChatApp.Blazor.Services
             {
                 ["chatId"] = chatId.ToString()
             };
-            var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("message/getall", queryStringParam));
+            var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString("api/message/getall", queryStringParam));
             var data = await response.Content.ReadFromJsonAsync<List<MessageDTO>>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return data;
         }
-        public async Task<PaginatedDataDTO<MessageDTO>> GetMessagesAsync(TableStateData<MessageSortProperty> tableState)
+        public async Task<PaginatedDataDTO<MessageDTO>> GetMessagesAsync(PaginatedDataStateDTO<MessageSortProperty> tableState)
         {
-            var response = await _httpClient.PostAsJsonAsync("message/getpaginated", tableState);
+            var response = await _httpClient.PostAsJsonAsync("api/message/getpaginated", tableState);
 
             response.EnsureSuccessStatusCode();
 

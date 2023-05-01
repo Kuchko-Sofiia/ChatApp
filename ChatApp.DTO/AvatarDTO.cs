@@ -1,14 +1,11 @@
-﻿namespace ChatApp.DAL.Entities
+﻿namespace ChatApp.DTO
 {
-    public class Avatar : IdentifiableEntity
+    public class AvatarDTO
     {
         public string FileName { get; set; } = null!;
         public string ContentType { get; set; } = null!;
         public string Content { get; set; } = null!;
-        public string UserId { get; set; } = null!;
+        public string? UserId { get; set; }
         public int? ChatId { get; set; }
-
-        public User? User { get; set; }
-        public Chat? Chat { get; set; }
     }
 }

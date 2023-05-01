@@ -20,7 +20,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task SignIn(SignInDTO signInDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("account/signin", signInDto);
+            var response = await _httpClient.PostAsJsonAsync("api/account/signin", signInDto);
             if (response.IsSuccessStatusCode)
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
@@ -32,7 +32,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task Login(LoginDTO loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("account/login", loginDto);
+            var response = await _httpClient.PostAsJsonAsync("api/account/login", loginDto);
             if (response.IsSuccessStatusCode)
             {
                 var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
@@ -46,7 +46,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task ChangePassword(ChangePasswordDTO changePasswordDto)
         {
-            var response = await _httpClient.PostAsJsonAsync("account/changepassword", changePasswordDto);
+            var response = await _httpClient.PostAsJsonAsync("api/account/changepassword", changePasswordDto);
 
             if (response.IsSuccessStatusCode)
             {

@@ -10,7 +10,7 @@ namespace ChatApp.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class MessageController : Controller
     {
         private readonly IMapper _mapper;
@@ -25,6 +25,13 @@ namespace ChatApp.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<MessageDTO>> CreateMessage([FromBody] MessageDTO messageDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
             var newMessage = _mapper.Map<Message>(messageDTO);
             await _messageService.CreateMessage(newMessage);
 
@@ -39,8 +46,15 @@ namespace ChatApp.API.Controllers
         }
 
         [HttpPost("getpaginated")]
-        public async Task<ActionResult<PaginatedDataDTO<MessageDTO>>> GetPaginatedMessages(TableStateData<MessageSortProperty> tableStateData)
+        public async Task<ActionResult<PaginatedDataDTO<MessageDTO>>> GetPaginatedMessages(PaginatedDataStateDTO<MessageSortProperty> tableStateData)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
+
             var messages = await _messageService.GetPaginatedMessagesAsync(tableStateData);
             return _mapper.Map<PaginatedDataDTO<MessageDTO>>(messages);
         }

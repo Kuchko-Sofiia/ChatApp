@@ -8,9 +8,10 @@ namespace ChatApp.DAL.Data
     public class ChatAppDbContext : IdentityDbContext<User>
     {
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Avatar> Avatars { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<ChatMember> ChatMembers { get; set; }
-        public DbSet<ChatInfo> ChatMembersCount { get; set; }
+        public DbSet<ChatInfo> ChatInfo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

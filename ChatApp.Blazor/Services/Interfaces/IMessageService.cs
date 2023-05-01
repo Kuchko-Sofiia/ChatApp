@@ -6,6 +6,6 @@ namespace ChatApp.Blazor.Services.Interfaces
     {
         public Task CreateNewMessage(MessageDTO messageDto);
         public Task<List<MessageDTO>> GetAllMessagesAsync(int chatId);
-        public Task<PaginatedDataDTO<MessageDTO>> GetMessagesAsync(TableStateData<MessageSortProperty> tableState);
+        public Task<PaginatedDataDTO<MessageDTO>> GetMessagesAsync(PaginatedDataStateDTO<MessageSortProperty> tableState);
     }
 }

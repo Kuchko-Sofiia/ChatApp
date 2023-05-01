@@ -9,9 +9,9 @@ namespace ChatApp.DAL.Repositories.Realizations
     {
         public MessageRepository(ChatAppDbContext context) : base(context) { }
 
-        public async Task<IQueryable<Message>> GetAllByChatId(int id)
+        public IQueryable<Message> GetAllByChatId(int id)
         {
-            return _dbSet.Where(m => m.ChatId == id).Include(m => m.Sender).Include(m => m.Chat).OrderByDescending(m => m.SentTime);
+            return _dbSet.Where(m => m.ChatId == id).Include(m => m.Sender).ThenInclude(u => u.Avatars).Include(m => m.Chat).OrderByDescending(m => m.SentTime);
         }
     }
 }

@@ -45,7 +45,7 @@
 @code {
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = null!;
-    private TableStateData<UserInfoSortProperty> _searchState = new()
+    private PaginatedDataStateDTO<UserInfoSortProperty> _searchState = new()
     {
         PageIndex = 1,
         PageSize = 20,
@@ -53,8 +53,8 @@
         SortDirection = SortDirectionData.None         
     };
     private ChatDTO _chatDTO = new ChatDTO()!;
-    private List<UserInfoDTO> _selectedUsers = new();
-    private List<UserInfoDTO> _paginatedUsers = new();
+    private List<UserDTO> _selectedUsers = new();
+    private List<UserDTO> _paginatedUsers = new();
 
     private void OnValidSubmit(EditContext context)
     {
@@ -91,7 +91,7 @@
         //TODO: get all user contacts
     }
 
-    private void SelectUser(UserInfoDTO user)
+    private void SelectUser(UserDTO user)
     {
         if (!_selectedUsers.Contains(user))
             _selectedUsers.Add(user);

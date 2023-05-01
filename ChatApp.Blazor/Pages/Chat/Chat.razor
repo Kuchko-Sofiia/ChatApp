@@ -28,14 +28,14 @@
         <div class="d-flex flex-column-reverse p-4" style="max-height:65vh;min-height:65vh; overflow-y: auto;">
             @foreach (var message in _messages)
             {
-                <div class="d-flex flex-row my-4 @((message.SenderId == _currentUserId) ? "align-self-end" : "")">
-                    <div class="mr-4">
-                        <MudAvatar Color="Color.Primary" Style="height:50px; width:50px;">@message.SenderId</MudAvatar>
-                    </div>
+                <div class="d-flex @((message.SenderId == _currentUserId) ? "flex-row" : "flex-row-reverse") my-4 align-content-start">
                     <div>
+                        <MudAvatar Color="Color.Primary" Style="height:45px; width:45px;" Image="@message.Sender.Avatars[^1].Content"></MudAvatar>
+                    </div>
+                    <div class="mx-2">
                         <MudText Typo="Typo.body1">@message.Sender?.FirstName @message.Sender?.LastName</MudText>
-                        <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.SentTime.ToString("dd MMM, yyyy hh:mm tt")</MudText>
-                        <MudText Typo="Typo.body2" Style=" padding: 15px;background-color: var(--mud-palette-background-grey);border-radius: 5px;margin-top:5px">@message.Text</MudText>
+                        @*<MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.SentTime.ToString("dd MMM, yyyy hh:mm tt")</MudText>*@
+                        <MudText Typo="Typo.body2" Style=" padding: 10px;background-color: var(--mud-palette-background-grey);border-radius: 5px;margin-top:5px">@message.Text</MudText>
                     </div>
                 </div>
             }
@@ -54,7 +54,7 @@
 
     private List<MessageDTO> _messages = new List<MessageDTO>();
     private MessageDTO _currentMessage = new MessageDTO();
-    private UserInfoDTO _currentUser = new UserInfoDTO();
+    private UserDTO _currentUser = new UserDTO();
 
     private string _currentUserId = null!;
     private ChatDTO? _chat = new ChatDTO();
@@ -65,7 +65,7 @@
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _chat = await ChatService.GetChatAsync(Id);
         _messages = await MessageService.GetAllMessagesAsync(Id);
-        _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
+        _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
         _currentUser = await UserService.GetUserByIdAsync(_currentUserId);
 
         _hubConnection = new HubConnectionBuilder()
@@ -83,14 +83,18 @@
 
     private async Task SendMessage()
     {
-        _currentMessage.ChatId = _chat.Id;
-        _currentMessage.SentTime = DateTime.UtcNow;
-        _currentMessage.SenderId = _currentUserId;
-        await MessageService.CreateNewMessage(_currentMessage);
+        if (!String.IsNullOrEmpty(_currentMessage.Text))
+        {
+            _currentMessage.ChatId = _chat!.Id;
+            _currentMessage.SentTime = DateTime.UtcNow;
+            _currentMessage.Sender = null;
+            _currentMessage.SenderId = _currentUserId;
+            await MessageService.CreateNewMessage(_currentMessage);
 
-        _currentMessage.Sender = _currentUser;
-        await _hubConnection.SendAsync("SendMessageAsync", _currentMessage);
+            _currentMessage.Sender = _currentUser;
+            await _hubConnection.SendAsync("SendMessageAsync", _currentMessage);
 
-        _currentMessage.Text = String.Empty;
+            _currentMessage.Text = String.Empty;
+        }
     }
 }

@@ -48,14 +48,14 @@ namespace ChatApp.DAL.Repositories.Realizations
             return query.AsEnumerable();
         }
 
-        public void Create(T entity)
+        public async void Create(T entity)
         {
-            _dbSet.AddAsync(entity);
+            await _dbSet.AddAsync(entity);
         }
 
-        public void CreateMultiple(IEnumerable<T> entities)
+        public async void CreateMultiple(IEnumerable<T> entities)
         {
-            _dbSet.AddRange(entities);
+            await _dbSet.AddRangeAsync(entities);
         }
 
         public void Update(T entity)

@@ -13,6 +13,9 @@ using ChatApp.DAL.Repositories.Interfaces;
 using ChatApp.DAL.Repositories.Realizations;
 using ChatApp.DAL.UnitOfWork;
 using ChatApp.API.Mapping;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using System.Reflection;
 
 namespace ChatApp.API.Extensions
 {
@@ -65,6 +68,7 @@ namespace ChatApp.API.Extensions
             services.AddTransient<IContactsRepository, ContactsRepository>();
             services.AddTransient<IChatMemberRepository, ChatMemberRepository>();
             services.AddTransient<IChatInfoRepository, ChatInfoRepository>();
+            services.AddTransient<IAvatarRepository, AvatarRepository>();
 
             //Servises
             services.AddTransient<IJwtTokenService, JwtTokenService>();
@@ -74,6 +78,10 @@ namespace ChatApp.API.Extensions
 
             //SignalR
             services.AddSignalR();
+
+            //FluentValidation
+            services.AddValidatorsFromAssembly(Assembly.Load("ChatApp.DTO"));
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
         }
 
         public static void AddApplicationServices(this IServiceCollection services, ConfigurationManager configuration)

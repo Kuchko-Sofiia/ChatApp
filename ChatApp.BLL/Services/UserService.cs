@@ -4,6 +4,7 @@ using ChatApp.BLL.Services.Interfaces;
 using ChatApp.DAL.Entities;
 using ChatApp.DAL.Repositories.Interfaces;
 using ChatApp.DAL.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApp.BLL.Services
 {
@@ -19,13 +20,15 @@ namespace ChatApp.BLL.Services
         public async Task<User> GetUserById(string id)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
-            return await userRepository.GetById(id);
+            
+            return await userRepository.GetUserWithAvatarById(id);
         }
 
-        public async Task<PaginatedData<User>> GetUsersAsync(TableStateData<UserInfoSortProperty> tableState)
+        public async Task<PaginatedData<User>> GetUsersAsync(PaginatedDataStateDTO<UserInfoSortProperty> tableState)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
-            var users = userRepository.GetAll();
+            var users = userRepository.GetAll().Include(u => u.Avatars).AsQueryable();
+            var usss = users.ToList();
 
             if (!String.IsNullOrWhiteSpace(tableState.SearchText))
             {
@@ -62,7 +65,7 @@ namespace ChatApp.BLL.Services
                 pageSize: tableState.PageSize);
         }
 
-        public async Task<bool> EditUser(UserInfoDTO userToEdit)
+        public async Task<bool> EditUser(UserDTO userToEdit)
         {
             var userRepository = _unitOfWork.GetRepository<IUserRepository>();
             var user =  await userRepository.GetById(userToEdit.Id);
@@ -78,6 +81,14 @@ namespace ChatApp.BLL.Services
 
             await _unitOfWork.SaveChangesAsync();
             return true;
+        }
+
+        public async Task AddAvatarAsync(Avatar avatar)
+        {
+            var avatarRepository = _unitOfWork.GetRepository<IAvatarRepository>();
+            avatarRepository.Create(avatar);
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

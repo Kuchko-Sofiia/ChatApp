@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ChatApp.Blazor.Services
 {
-    public class WrappedHttpClient: IWrappedHttpClient
+    public class WrappedHttpClient : IWrappedHttpClient
     {
         private readonly ICustomLocalStorageService _localStorage;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -117,11 +117,11 @@ namespace ChatApp.Blazor.Services
             return httpClient;
         }
 
-        private async Task HandleResponse(HttpResponseMessage response)
+        private async Task HandleUnauthorizedResponse(HttpResponseMessage response)
         {
-            if(response.StatusCode == HttpStatusCode.Unauthorized)
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                if(DateTime.UtcNow != await _localStorage.GetRefreshTokenExpTimeAsync())
+                if (DateTime.UtcNow != await _localStorage.GetRefreshTokenExpTimeAsync())
                 {
                     await _localStorage.RemoveJwtTokenInfoAsync();
                     _navigationManager.NavigateTo("/");
@@ -133,18 +133,35 @@ namespace ChatApp.Blazor.Services
                     AccessToken = await _localStorage.GetJwtTokenAsync()
                 };
 
-                if (tokenDto.RefreshToken != null)
-                {
-                    var httpClient = _httpClientFactory.CreateClient();
-                    var tokenResponse = await httpClient.PostAsJsonAsync($"account/refresh-token", tokenDto);
+                var httpClient = _httpClientFactory.CreateClient();
+                var tokenResponse = await httpClient.PostAsJsonAsync($"account/refresh-token", tokenDto);
 
-                    if (tokenResponse.IsSuccessStatusCode)
-                    {
-                        var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
-                        await _localStorage.SetJwtTokenInfoAsync(authResponse);
-                        //TODO: implement logic to re-execute of the base request
-                    }
+                if (tokenResponse.IsSuccessStatusCode)
+                {
+                    var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
+                    await _localStorage.SetJwtTokenInfoAsync(authResponse!);
                 }
+                else
+                {
+                    await _localStorage.RemoveJwtTokenInfoAsync();
+                    _navigationManager.NavigateTo("/");
+                }
+            }
+        }
+
+        private async Task HandleBadRequestResponse(HttpResponseMessage response)
+        {
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                using var document = JsonDocument.Parse(responseContent);
+                var errorsElement = document.RootElement.GetProperty("errors");
+
+                var errorMessages = errorsElement.EnumerateObject()
+                    .SelectMany(x => x.Value.EnumerateArray())
+                    .Select(x => x.GetString())
+                    .ToList();
             }
         }
     }

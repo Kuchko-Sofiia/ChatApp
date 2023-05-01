@@ -9,7 +9,7 @@ namespace ChatApp.API.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ChatController : Controller
     {
         private readonly IMapper _mapper;
@@ -24,6 +24,12 @@ namespace ChatApp.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ChatDTO>> CreateChat([FromBody] ChatDTO chatDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
             var newChat = _mapper.Map<Chat>(chatDTO);
             await _chatService.CreateChat(newChat, chatDTO.MembersId);
 
@@ -38,8 +44,14 @@ namespace ChatApp.API.Controllers
         }
 
         [HttpPost("getall")]
-        public async Task<ActionResult<PaginatedDataDTO<ChatDTO>>> GetAllChats(TableStateData<ChatSortProperty> tableStateData)
+        public async Task<ActionResult<PaginatedDataDTO<ChatDTO>>> GetAllChats(PaginatedDataStateDTO<ChatSortProperty> tableStateData)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
             var chats = await _chatService.GetPaginatedChatsAsync(tableStateData);
             return _mapper.Map<PaginatedDataDTO<ChatDTO>>(chats);
         }

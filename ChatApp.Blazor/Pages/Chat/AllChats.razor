@@ -48,8 +48,6 @@
 @code {
     private IEnumerable<ChatDTO>? _chatsList;
     private MudTable<ChatDTO>? table;
-
-    private int totalItems;
     private string? searchString = null;
 
     private async Task<TableData<ChatDTO>> ServerReload(TableState state)
@@ -80,9 +78,9 @@
         table?.ReloadServerData();
     }
 
-    public TableStateData<ChatSortProperty> GetTableState(TableState state)
+    public PaginatedDataStateDTO<ChatSortProperty> GetTableState(TableState state)
     {
-        return new TableStateData<ChatSortProperty>()
+        return new PaginatedDataStateDTO<ChatSortProperty>()
         {
             PageIndex = state.Page + 1,
             PageSize = state.PageSize,

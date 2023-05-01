@@ -10,7 +10,7 @@ using ChatApp.DAL.Entities;
 namespace ChatApp.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -28,7 +28,12 @@ namespace ChatApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
 
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
@@ -56,7 +61,12 @@ namespace ChatApp.API.Controllers
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] SignInDTO signInDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
 
             var user = _mapper.Map<User>(signInDto);
 
@@ -88,7 +98,12 @@ namespace ChatApp.API.Controllers
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
 
             var user = await _userManager.FindByEmailAsync(changePasswordDto.Email);
 
@@ -113,7 +128,12 @@ namespace ChatApp.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthResponseDTO>> RefreshToken(TokenDTO tokenModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage).ToList();
+                return BadRequest(errors);
+            }
 
             var principal = _jwtTokenService.GetPrincipalFromExpiredToken(tokenModel.AccessToken);
 

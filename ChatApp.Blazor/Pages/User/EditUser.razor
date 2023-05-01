@@ -7,13 +7,28 @@
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
-<div class="d-flex justify-content-center">
-    <MudGrid>
+<div class="d-flex justify-content-center justify-items-center">
+    <MudGrid Style="max-width:800px">
         <MudItem xs="12" sm="7">
             <MudPaper Class="pa-4">
                 <h3 class="mb-5">EditUser</h3>
                 @if (userInfo != null)
                 {
+                    <MudCarousel Class="mud-width-full mb-3" @ref="_carousel" ItemsSource="_userAvatars" @bind-SelectedIndex="_selectedImageIndex" Style="height:250px;" ShowArrows="true" EnableSwipeGesture="true" ShowBullets="false" AutoCycle="false">
+                        <ItemTemplate>
+                            <div class="d-flex flex-column justify-center">
+                                <MudCardMedia Image="@_userAvatars[_carousel.SelectedIndex]" Height="250" />
+                            </div>
+                        </ItemTemplate>
+                    </MudCarousel>
+                    <div class="d-flex justify-content-end align-items-center mb-4">
+                        <MudFileUpload Style="margin-top:0px" T="IBrowserFile" MaxFiles="1" FilesChanged="@((files) => AddImageAsync(files))">
+                            <ButtonTemplate>
+                                <MudFab HtmlTag="label" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add" for="@context" />
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                        <MudFab HtmlTag="label" Color="Color.Error" Size="Size.Small" StartIcon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveImageAsync())" Style="margin-left:15px" />
+                    </div>
                     <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" ReadOnly="false">
                         <MudTextField @bind-Value="@userInfo.UserName" Label="UserName" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-5" />
                         <MudTextField @bind-Value="@userInfo.Email" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-5" />
@@ -32,12 +47,16 @@
 </div>
 
 @code {
+    private MudCarousel<string> _carousel;
+    private int _selectedImageIndex;
+    private IList<string> _userAvatars = new List<string>();
+    private AvatarDTO _newAvatar = new AvatarDTO();
+
     bool success;
     string[]? errors = { };
-    MudTextField<string>? pwField1;
     MudForm? form;
 
-    private UserInfoDTO? userInfo;
+    private UserDTO? userInfo;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -47,18 +66,47 @@
             string id = QueryHelpers.ParseQuery(uri.Query)["userId"];
 
             userInfo = await UserService.GetUserByIdAsync(id);
+            foreach(var a in userInfo.Avatars)
+            {
+                _userAvatars.Add(a.Content);
+            }
             StateHasChanged();
         }
     }
 
     private void OnBack()
     {
-        NavigationManager.NavigateTo($"/users/user-details?userId={userInfo?.Id}");
+        NavigationManager.NavigateTo($"/users/details?userId={userInfo?.Id}");
     }
 
     private async void OnSaveChanges()
     {
         await UserService.EditUserAsync(userInfo);
-        NavigationManager.NavigateTo($"/users/user-details?userId={userInfo?.Id}");
+        NavigationManager.NavigateTo($"/users/details?userId={userInfo?.Id}");
+    }
+
+    private async Task AddImageAsync(IBrowserFile file)
+    {
+        using var stream = file.OpenReadStream(file.Size);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+        var contentBytes = ms.ToArray();
+        var base64Content = $"data:{file.ContentType};base64,{Convert.ToBase64String(contentBytes)}";
+
+        var avatar = new AvatarDTO
+        {
+            FileName = file.Name,
+            ContentType = file.ContentType,
+            Content = base64Content,
+            UserId = userInfo?.Id
+        };
+
+        await UserService.AddAvatarAsync(avatar);
+        NavigationManager.NavigateTo($"/users/details?userId={userInfo?.Id}");
+    }
+
+    private async Task RemoveImageAsync()
+    {
+        await Task.Delay(1);
     }
 }

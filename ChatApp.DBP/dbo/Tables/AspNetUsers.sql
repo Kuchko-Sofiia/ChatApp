@@ -19,8 +19,8 @@
     [RefreshToken] NVARCHAR(MAX) NULL, 
     [RefreshTokenExpiryTime] DATETIME2 NULL, 
     [LastName] NVARCHAR(256) NULL, 
-    [DateOfBirth] DATETIME NULL, 
-    [LastTimeActive] DATETIME NULL, 
+    [DateOfBirth] DATETIME2 NULL, 
+    [LastTimeActive] DATETIME2 NULL, 
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

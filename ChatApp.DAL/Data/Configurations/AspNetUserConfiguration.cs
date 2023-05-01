@@ -23,7 +23,7 @@ namespace ChatApp.DAL.Data.Configurations
             builder.Property(u => u.AccessToken).HasMaxLength(2000);
             builder.Property(u => u.RefreshToken).HasMaxLength(2000);
             //builder.Property(u => u.LastTimeActive).HasColumnType("datetime");
-            //builder.Property(u => u.DateOfBirth).HasColumnType("date");
+            builder.Property(u => u.DateOfBirth).HasColumnType("datetime2");
             builder.Property(u => u.RefreshTokenExpiryTime).HasColumnType("datetime2");
 
             builder.HasMany(u => u.ChatMembers)
