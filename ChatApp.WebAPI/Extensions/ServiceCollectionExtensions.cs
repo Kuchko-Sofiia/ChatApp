@@ -76,9 +76,6 @@ namespace ChatApp.API.Extensions
             services.AddTransient<IChatService, ChatService>();
             services.AddTransient<IMessageService, MessageService>();
 
-            //SignalR
-            services.AddSignalR();
-
             //FluentValidation
             services.AddValidatorsFromAssembly(Assembly.Load("ChatApp.DTO"));
             services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
@@ -99,6 +96,7 @@ namespace ChatApp.API.Extensions
 
             services.AddLogging();
             services.AddControllers();
+            services.AddSignalR();
         }
         public static void AddSwaggerServices(this IServiceCollection services)
         {

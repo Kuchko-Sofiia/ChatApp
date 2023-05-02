@@ -25,6 +25,7 @@ namespace ChatApp.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<MessageDTO>> CreateMessage([FromBody] MessageDTO messageDTO)
         {
+            messageDTO.Sender = null; //TODO: !!
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors)

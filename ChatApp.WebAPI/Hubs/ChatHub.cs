@@ -5,9 +5,9 @@ namespace ChatApp.API.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessageAsync(MessageDTO message)
+        public async Task SendNewMessageAsync(MessageDTO _currentMessage)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.All.SendAsync("ReceiveMessage", _currentMessage);
         }
     }
 }

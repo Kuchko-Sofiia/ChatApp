@@ -3,8 +3,9 @@
 @using System.Security.Claims;
 
 @inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
 @inject IAccountService AccountService
 
 <PageTitle>ChatApp.Blazor</PageTitle>
@@ -60,7 +61,6 @@
 <MudSnackbarProvider />
 
 @code {
-
     private async Task Logout()
     {
         await AccountService.Logout();

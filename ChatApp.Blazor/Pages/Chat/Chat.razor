@@ -45,7 +45,7 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    private HubConnection _hubConnection { get; set; }
+    private HubConnection HubConnection;
 
     private AuthenticationState? _authState;
     private UserDTO _currentUser = new UserDTO();
@@ -64,7 +64,20 @@
         _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
         _currentUser = await UserService.GetUserByIdAsync(_currentUserId);
 
-        await InitializeHubConnection();
+        HubConnection = new HubConnectionBuilder()
+            .WithUrl($"{Configuration.GetSection("AppBase").Value}chathub")
+            .Build();
+
+        if (HubConnection.State == HubConnectionState.Disconnected)
+        {
+            await HubConnection.StartAsync();
+        }
+
+        HubConnection.On<MessageDTO>("ReceiveMessage", async message =>
+        {
+            _messages.Insert(0, message);
+            await InvokeAsync(StateHasChanged);
+        });
     }
 
     private async Task SendMessage()
@@ -73,12 +86,21 @@
         {
             _currentMessage.ChatId = _chat!.Id;
             _currentMessage.SentTime = DateTime.UtcNow;
-            _currentMessage.Sender = null;
+            _currentMessage.Sender = _currentUser;
             _currentMessage.SenderId = _currentUserId;
             await MessageService.CreateNewMessage(_currentMessage);
 
             _currentMessage.Sender = _currentUser;
-            await _hubConnection!.SendAsync("SendMessageAsync", _currentMessage);
+
+            Console.WriteLine($"State: {HubConnection.State}");
+            Console.WriteLine($"ConnectionId: {HubConnection.ConnectionId}");
+            Console.WriteLine($"ServerTimeout: {HubConnection.ServerTimeout}");
+            Console.WriteLine($"HandshakeTimeout: {HubConnection.HandshakeTimeout}");
+            await HubConnection.SendAsync("SendNewMessageAsync", _currentMessage);
+            Console.WriteLine($"State: {HubConnection.State}");
+            Console.WriteLine($"ConnectionId: {HubConnection.ConnectionId}");
+            Console.WriteLine($"ServerTimeout: {HubConnection.ServerTimeout}");
+            Console.WriteLine($"HandshakeTimeout: {HubConnection.HandshakeTimeout}");
 
             _currentMessage.Text = String.Empty;
         }
@@ -86,19 +108,19 @@
 
     private async Task InitializeHubConnection()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl($"{Configuration.GetSection("AppBase").Value}chathub")
+        HubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri($"{Configuration.GetSection("AppBase").Value}chathub"))
             .Build();
 
-        _hubConnection.On<MessageDTO>("ReceiveMessage", async message =>
+        HubConnection.On<MessageDTO>("ReceiveMessage", async (message) =>
         {
             _messages.Insert(0, message);
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         });
 
-        if (_hubConnection.State == HubConnectionState.Disconnected)
+        if (HubConnection.State == HubConnectionState.Disconnected)
         {
-            await _hubConnection.StartAsync();
+            await HubConnection.StartAsync();
         }
     }
 }
