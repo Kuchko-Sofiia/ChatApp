@@ -84,9 +84,10 @@ namespace ChatApp.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("avatar/remove/{id}")]
-        public async Task<ActionResult<AvatarDTO>> RemoveUserAvatar(int avatarId)
+        [HttpDelete("avatar/remove/{id:int}")]
+        public async Task<ActionResult<AvatarDTO>> RemoveUserAvatar(int id)
         {
+            await _userService.RemoveAvatarAsync(id);
             return Ok();
         }
     }

@@ -13,9 +13,9 @@
         <hr style="margin:0px"/>
         <MudForm Model="@_signInDto" @ref="@_form" Validation="@(new SignInDTOValidator().ValidateValue)" ValidationDelay="150" style="min-width:350px; width:500px">
             <MudCardContent>
-                <MudTextField Immediate="true" @bind-Value="_signInDto.UserName" For="@(() => _signInDto.UserName)" Label="UserName" />
-                <MudTextField Immediate="true" @bind-Value="_signInDto.Email" For="@(() => _signInDto.Email)" Label="Email" />
-                <MudTextField Immediate="true" @bind-Value="_signInDto.DateOfBirth" For="@(() => _signInDto.DateOfBirth)" Label="Date Of Birth" />
+                <MudTextField Immediate="true" @bind-Value="_signInDto.UserName" For="@(() => _signInDto.UserName)" Label="UserName" InputType="InputType.Text"/>
+                <MudTextField Immediate="true" @bind-Value="_signInDto.Email" For="@(() => _signInDto.Email)" Label="Email" InputType="InputType.Email"/>
+                <MudTextField Immediate="true" @bind-Value="_signInDto.DateOfBirth" For="@(() => _signInDto.DateOfBirth)" Label="Date Of Birth"/>
                 <MudTextField Immediate="true" @bind-Value="_signInDto.Password" For="@(() => _signInDto.Password)" Label="Password" InputType="InputType.Password" />
                 <MudTextField Immediate="true" @bind-Value="_signInDto.ConfirmPassword" For="@(() => _signInDto.ConfirmPassword)" Label="Confirm Password" InputType="InputType.Password" />
             </MudCardContent>

@@ -36,5 +36,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<VideoChatHub>("/videochathub");
 
 app.Run();

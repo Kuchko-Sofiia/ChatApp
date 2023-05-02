@@ -10,5 +10,6 @@ namespace ChatApp.BLL.Services.Interfaces
         public Task<PaginatedData<User>> GetUsersAsync(PaginatedDataStateDTO<UserInfoSortProperty> tableState);
         public Task<bool> EditUser(UserDTO userToEdit);
         public Task AddAvatarAsync(Avatar avatar);
+        public Task RemoveAvatarAsync(int avatarId);
     }
 }

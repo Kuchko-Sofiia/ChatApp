@@ -12,7 +12,10 @@
 
 <div class="d-flex justify-content-center">
     <MudCard Style="width: 400px;">
-        <MudCardMedia Image="@_userInfo?.Avatars[^1].Content" Height="200" />
+        @if (_userInfo?.Avatars != null && _userInfo?.Avatars.Count > 0)
+        {
+            <MudCardMedia Image="@_userInfo?.Avatars[^1].Content" Height="200" />
+        }
         <MudCardContent>
             <MudText Typo="Typo.h5">@_userInfo?.FirstName @_userInfo?.LastName</MudText>
             <MudPaper Width="100%" Square="true">

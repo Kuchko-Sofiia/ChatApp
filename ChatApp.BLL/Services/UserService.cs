@@ -90,5 +90,18 @@ namespace ChatApp.BLL.Services
 
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task RemoveAvatarAsync(int avatarId)
+        {
+            var avatarRepository = _unitOfWork.GetRepository<IAvatarRepository>();
+
+            var avatarToDelete = await avatarRepository.GetById(avatarId);
+            if(avatarToDelete != null)
+            {
+                avatarRepository.Delete(avatarToDelete);
+            } 
+
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

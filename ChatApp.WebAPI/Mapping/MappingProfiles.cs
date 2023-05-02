@@ -56,7 +56,8 @@ namespace ChatApp.API.Mapping
                 .ForMember(user => user.FirstName, opt => opt.MapFrom(userInfoDto => userInfoDto.FirstName))
                 .ForMember(user => user.LastName, opt => opt.MapFrom(userInfoDto => userInfoDto.LastName))
                 .ForMember(user => user.PhoneNumber, opt => opt.MapFrom(userInfoDto => userInfoDto.PhoneNumber))
-                .ForMember(user => user.DateOfBirth, opt => opt.MapFrom(userInfoDto => userInfoDto.DateOfBirth)).ReverseMap();
+                .ForMember(user => user.DateOfBirth, opt => opt.MapFrom(userInfoDto => userInfoDto.DateOfBirth))
+                .ForMember(user => user.Avatars, opt => opt.MapFrom(userInfoDto => userInfoDto.Avatars)).ReverseMap();
 
             CreateMap<ChatDTO, Chat>()
                 .ForMember(chat => chat.Id, opt => opt.MapFrom(chatDTO => chatDTO.Id))
@@ -78,6 +79,7 @@ namespace ChatApp.API.Mapping
                 .ForMember(m => m.SentTime, opt => opt.MapFrom(messageDTO => messageDTO.SentTime)).ReverseMap();
 
             CreateMap<AvatarDTO, Avatar>()
+                .ForMember(a => a.Id, opt => opt.MapFrom(avatarDTO => avatarDTO.Id))
                 .ForMember(a => a.FileName, opt => opt.MapFrom(avatarDTO => avatarDTO.FileName))
                 .ForMember(a => a.ContentType, opt => opt.MapFrom(avatarDTO => avatarDTO.ContentType))
                 .ForMember(a => a.Content, opt => opt.MapFrom(avatarDTO => avatarDTO.Content))

@@ -2,6 +2,7 @@
 {
     public class AvatarDTO
     {
+        public int Id { get; set; }
         public string FileName { get; set; } = null!;
         public string ContentType { get; set; } = null!;
         public string Content { get; set; } = null!;

@@ -8,5 +8,6 @@ namespace ChatApp.Blazor.Services.Interfaces
         public Task<PaginatedDataDTO<UserDTO>> GetUsersAsync(PaginatedDataStateDTO<UserInfoSortProperty> tableState);
         public Task EditUserAsync(UserDTO userInfoDto);
         public Task AddAvatarAsync(AvatarDTO avatar);
+        public Task RemoveAvatarAsync(int avatarId);
     }
 }

@@ -30,7 +30,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Avatar">
-            @if (@context.Avatars != null)
+            @if (@context.Avatars != null && @context.Avatars.Count > 0)
             {
                 <MudAvatar Color="Color.Secondary" Image="@context.Avatars[^1].Content" />
             }

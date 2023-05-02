@@ -3,7 +3,6 @@ using ChatApp.Blazor.Services.Interfaces;
 using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-using MudBlazor;
 
 namespace ChatApp.Blazor.Services
 {
@@ -51,13 +50,11 @@ namespace ChatApp.Blazor.Services
 
             response.EnsureSuccessStatusCode();
         }
+        public async Task RemoveAvatarAsync(int avatarId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/user/avatar/remove/{avatarId}");
 
-
-        //public async Task RemoveAvatarAsync(int avatarId)
-        //{
-        //    var response = await _httpClient.DeleteAsync("user/avatar/add", avatarId);
-
-        //    response.EnsureSuccessStatusCode();
-        //}
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

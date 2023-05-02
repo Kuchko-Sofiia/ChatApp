@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "webrtc": "^1.14.1"
+  }
+}
