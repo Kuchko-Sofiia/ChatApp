@@ -1,0 +1,21 @@
+﻿@page "/video-chat2"
+
+@using Microsoft.JSInterop;
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
+
+<h1>Video Call</h1>
+<div style="display:flex; width:100%; justify-content: space-around;">
+    <div style="display:flex; flex-direction:column; width: 500px; height:450px">
+        <h3>Local video</h3>
+        <video id="localVideo" autoplay="autoplay"></video>
+    </div>
+    <div style="display:flex; flex-direction:column; width: 500px; height:450px">
+        <h3>Remote video</h3>
+        <video id="remoteVideo" autoplay="autoplay"></video>
+    </div>
+</div>
+
+@code {
+}
