@@ -45,11 +45,16 @@
             {
                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OnEdit())">Edit</MudButton>
             }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@((e) => Call())">Call</MudButton>
+            }
         </MudCardActions>
     </MudCard>
 </div>
 
 @code {
+    [CascadingParameter] public HubConnection HubConnection { get; set; }
     private UserDTO? _userInfo;
     private bool _editEnabled;
 
@@ -72,5 +77,9 @@
     {
         var uri = new Uri(NavigationManager.ToAbsoluteUri($"/users/edit-user?userId={_userInfo.Id}").ToString());
         NavigationManager.NavigateTo(uri.ToString());
+    }
+    private async Task Call()
+    {
+        NavigationManager.NavigateTo($"/video-chat/{_userInfo.Id}");
     }
 }

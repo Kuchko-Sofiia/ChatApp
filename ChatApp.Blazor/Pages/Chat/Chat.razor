@@ -55,7 +55,7 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    private HubConnection HubConnection = null!;
+    private HubConnection HubConnection = null;
 
     private AuthenticationState? _authState;
     private UserDTO _currentUser = new UserDTO();
@@ -100,8 +100,7 @@
     private async Task InitializeHubConnection()
     {
         HubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri($"{Configuration.GetSection("AppBase").Value}chathub?chatId={_chat!.Id}"))
-            .Build();
+            .WithUrl(NavigationManager.ToAbsoluteUri($"{Configuration.GetSection("AppBase").Value}chathub?chatId={_chat!.Id}")).Build();
 
         HubConnection.On<MessageDTO>("ReceiveMessage", async (message) =>
         {

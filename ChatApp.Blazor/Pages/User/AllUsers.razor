@@ -70,6 +70,8 @@
 </MudTable>
 
 @code {
+    [CascadingParameter(Name = "VideoChatHubConnection")]
+    public HubConnection HubConnection { get; set; }
     private IEnumerable<UserDTO>? _usersList;
     private MudTable<UserDTO>? table;
 

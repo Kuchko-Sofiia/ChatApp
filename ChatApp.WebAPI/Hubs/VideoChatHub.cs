@@ -1,10 +1,23 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System.Security.Policy;
+﻿using ChatApp.DAL.Entities;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.API.Hubs
 {
     public class VideoChatHub : Hub
     {
+        public override async Task OnConnectedAsync()
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.Request.Query["userId"]);
+
+            await base.OnConnectedAsync();
+        }
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.Request.Query["userId"]);
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public async Task JoinRoom(string roomId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.Request.Query["roomId"]);
@@ -19,9 +32,9 @@ namespace ChatApp.API.Hubs
             await Clients.OthersInGroup(roomId).SendAsync("PeerLeft", Context.ConnectionId);
         }
 
-        public async Task CallUser(string userId)
+        public async Task Call(string userId, string peerId)
         {
-            //TODO: implement logic of notifying another user
+            await Clients.Group(userId).SendAsync("IncomingCall", userId, peerId);
         }
     }
 }

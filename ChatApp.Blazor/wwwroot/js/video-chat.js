@@ -12,7 +12,7 @@ export function setUpPeer() {
             console.log('incoming call...');
             console.log('Call: ', call);
             navigator.mediaDevices
-                .getUserMedia({ video: true, audio: false })
+                .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
                     call.answer(stream);
                     console.log('Call answered');
@@ -28,7 +28,6 @@ export function setUpPeer() {
             reject(error);
         });
     });
-
 }
 
 export function getPeerId(peer) {
