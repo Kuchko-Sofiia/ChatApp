@@ -19,6 +19,7 @@
         <MudToolBar Dense="true">
             <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px"></MudIcon>
             <MudText Typo="Typo.h6">@(_chat?.Name ?? "chat")</MudText>
+                <MudButton OnClick="StartVideoCall" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Dark" ButtonType="ButtonType.Button">VideoCall</MudButton>
         </MudToolBar>
         <div class="d-flex flex-column-reverse p-4" style="max-height:65vh;min-height:65vh; overflow-y: auto;">
             @foreach (var message in _messages)
@@ -90,6 +91,10 @@
 
             _currentMessage.Text = String.Empty;
         }
+    }
+    private async Task StartVideoCall()
+    {
+        NavigationManager.NavigateTo($"/video-chat/{_chat.Id}");
     }
 
     private async Task InitializeHubConnection()

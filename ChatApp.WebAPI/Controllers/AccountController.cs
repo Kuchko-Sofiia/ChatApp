@@ -5,7 +5,7 @@ using AutoMapper;
 using ChatApp.DTO.Authentication;
 using ChatApp.BLL.Services.Interfaces;
 using ChatApp.DAL.Entities;
-
+using System.Text;
 
 namespace ChatApp.API.Controllers
 {
@@ -22,6 +22,13 @@ namespace ChatApp.API.Controllers
             _jwtTokenService = jwtTokenService;
             _mapper = mapper;
             _userManager = userManager;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("test22")]
+        public async Task<IActionResult> Test()
+        {
+            return Ok();
         }
 
         [AllowAnonymous]

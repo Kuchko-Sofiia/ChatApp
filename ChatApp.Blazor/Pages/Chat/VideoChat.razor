@@ -27,23 +27,26 @@
 @code {
     [Parameter] public int Id { get; set; }
     private HubConnection HubConnection = null!;
-    private ChatDTO? _chat = new ChatDTO()
-    {
-        Id = 4    
-    };
+    private ChatDTO? _chat = new ChatDTO();
 
-    private IJSObjectReference _videoChatModule;
-    private IJSObjectReference _localStream;
-    private string _peerId;
-    private string _peerToCallId;
+    private IJSObjectReference _videoChatModule = null!;
+    private IJSObjectReference _localStream = null!;
+    private IJSObjectReference _remoteStream = null!;
+    private IJSObjectReference _peer = null!;
+    private string _peerId = null!;
+    private string _peerToCallId = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        //_chat = await ChatService.GetChatAsync(Id);
+        _chat = await ChatService.GetChatAsync(Id);
 
         _videoChatModule = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/video-chat.js");
-        _peerId = await _videoChatModule.InvokeAsync<string>("createPeer");
-        _localStream = await _videoChatModule.InvokeAsync<IJSObjectReference>("startLocalStream");
+
+        _peerId = await _videoChatModule.InvokeAsync<string>("setUpPeer");
+        //_peerId = await _videoChatModule.InvokeAsync<string>("getPeerId", _peer);
+        //_peer = await _videoChatModule.InvokeAsync<IJSObjectReference>("subscribePeerToCalls", _peer);
+
+        _localStream = await _videoChatModule.InvokeAsync<IJSObjectReference>("getLocalStream");
         await _videoChatModule.InvokeVoidAsync("setLocalStream", _localStream);
 
         await InvokeAsync(StateHasChanged);
@@ -52,7 +55,8 @@
 
     private async Task Call()
     {
-        await _videoChatModule.InvokeVoidAsync("callPeer", _peerToCallId);
+        await _videoChatModule.InvokeVoidAsync("callToPeer", _localStream, _peerToCallId);
+        await HubConnection.SendAsync("CallToUser", _chat.Id);
     }
 
     private async Task InitializeHubConnection()

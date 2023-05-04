@@ -20,7 +20,7 @@ namespace ChatApp.Blazor.Services
             //var accessToken = await _localStorageService.GetItemAsync<string>("token");
             //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            var response = await _httpClient.GetAsync("https://localhost:7158/api/account/test");
+            var response = await _httpClient.GetAsync("api/account/test");
 
             if (response.IsSuccessStatusCode)
             {

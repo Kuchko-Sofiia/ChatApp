@@ -16,7 +16,7 @@ namespace ChatApp.Blazor.Services
 
         public async Task CreateNewChat(ChatDTO chatDto)
         {
-            await _httpClient.PostAsJsonAsync("api/chat/create", chatDto);
+            var reaponse = await _httpClient.PostAsJsonAsync("api/chat/create", chatDto);
         }
 
         public async Task<ChatDTO> GetChatAsync(int chatId)

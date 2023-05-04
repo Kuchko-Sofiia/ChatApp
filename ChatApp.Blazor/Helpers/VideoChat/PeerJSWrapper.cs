@@ -31,11 +31,11 @@ namespace ChatApp.Blazor.Helpers.VideoChat
             return await mediaDevices.InvokeAsync<MediaStream>("getUserMedia", new { video = true, audio = true });
         }
 
-        public async Task HandleMediaStreamEvents(string eventName, DotNetObjectReference<VideoChat2> componentRef)
-        {
-            var mediaStream = await GetUserMedia();
-            await _jsRuntime.InvokeVoidAsync("peerjsWrapper.handleMediaStreamEvents", _peer, mediaStream, eventName, componentRef);
-        }
+        //public async Task HandleMediaStreamEvents(string eventName, DotNetObjectReference<VideoChat> componentRef)
+        //{
+        //    var mediaStream = await GetUserMedia();
+        //    await _jsRuntime.InvokeVoidAsync("peerjsWrapper.handleMediaStreamEvents", _peer, mediaStream, eventName, componentRef);
+        //}
     }
 
 }
