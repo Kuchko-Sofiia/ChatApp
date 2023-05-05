@@ -1,0 +1,43 @@
+﻿@*@inject ISnackbar Snackbar
+
+<MudText>@_user.Email calling</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@AcceptCall">
+    Accept
+</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Show">
+    Decline
+</MudButton>
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+    private void AcceptCall()
+    {
+        
+    }
+
+    private void DeclineCall()
+    {
+
+    }
+    void Show()
+    {
+        Snackbar.Add("Ooops. Something really bad happened!", Severity.Normal, config =>
+        {
+            config.Action = "Help";
+            config.ActionColor = Color.Primary;
+            config.Onclick = snackbar =>
+            {
+                Help();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void Help()
+    {
+        Snackbar.Add("Please check the reactor temperature and try again");
+    }
+}*@

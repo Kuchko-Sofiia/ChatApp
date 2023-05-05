@@ -1,5 +1,4 @@
-﻿using ChatApp.DAL.Entities;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.API.Hubs
 {
@@ -18,23 +17,19 @@ namespace ChatApp.API.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task JoinRoom(string roomId)
+        public async Task Call(string callingUserId, string userId, string peerId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, Context.GetHttpContext()!.Request.Query["roomId"]);
-            await Clients.OthersInGroup(roomId).SendAsync("PeerJoined", Context.ConnectionId);
-
-            await base.OnConnectedAsync();
+            await Clients.Group(userId).SendAsync("IncomingCall", callingUserId, peerId);
         }
 
-        public async Task LeaveRoom(string roomId)
+        public async Task HangUp(string userId)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
-            await Clients.OthersInGroup(roomId).SendAsync("PeerLeft", Context.ConnectionId);
+            await Clients.Group(userId).SendAsync("CallTerminated");
         }
 
-        public async Task Call(string userId, string peerId)
+        public async Task DeclineCall(string userId)
         {
-            await Clients.Group(userId).SendAsync("IncomingCall", userId, peerId);
+            await Clients.Group(userId).SendAsync("CallDeclined");
         }
     }
 }

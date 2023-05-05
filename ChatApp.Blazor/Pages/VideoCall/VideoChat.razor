@@ -4,32 +4,35 @@
 @using ChatApp.DTO;
 @using Microsoft.AspNetCore.WebUtilities;
 @using Microsoft.JSInterop;
+@using System.Security.Claims;
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
 @inject IChatService ChatService
 @inject IJSRuntime jsRuntime
 
 <h1>Video Call</h1>
-<p>@_peerId?</p>
-<MudTextField @bind-Value="_peerToCallId"></MudTextField>
-<MudButton @onclick="CallToUser">Call</MudButton>
 <div style="display:flex; width:100%; justify-content: space-around;">
-    <div style="display:flex; flex-direction:column; width: 500px; height:450px">
+    <div style="display:flex; flex-direction:column; width: 350px; height:auto">
         <h3>Local video</h3>
-        <video id="localVideo" autoplay="autoplay"></video>
+        <video id="localVideo" autoplay="autoplay" muted="true"></video>
     </div>
-    <div style="display:flex; flex-direction:column; width: 500px; height:450px">
+    <div style="display:flex; flex-direction:column; width: 350px; height:auto">
         <h3>Remote video</h3>
         <video id="remoteVideo" autoplay="autoplay"></video>
     </div>
 </div>
+<MudButton @onclick="CallToUser">Call</MudButton>
+<MudButton @onclick="HangUp">Hang up</MudButton>
 
 @code {
     [Parameter] 
     public string Id { get; set; }
     [CascadingParameter(Name = "VideoChatHubConnection")]
     public HubConnection HubConnection { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
 
     private IJSObjectReference _videoChatModule = null!;
     private IJSObjectReference _localStream = null!;
@@ -38,8 +41,14 @@
     private string _peerId = null!;
     private string _peerToCallId = null!;
 
+    private AuthenticationState? _authState;
+    private string _currentUserId = null!;
+
     protected override async Task OnInitializedAsync()
     {
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
+
         _videoChatModule = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/video-chat.js");
 
         _peerId = await _videoChatModule.InvokeAsync<string>("setUpPeer");
@@ -60,31 +69,40 @@
             AnswerCall();
         }
 
-        await InvokeAsync(StateHasChanged);
         await InitializeHubConnection();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CallToUser()
+    {
+        await HubConnection.SendAsync("Call", _currentUserId, Id, _peerId);
     }
 
     private async Task AnswerCall()
     {
         await _videoChatModule.InvokeVoidAsync("callToPeer", _localStream, _peerToCallId);
     }
-    private async Task CallToUser()
+
+    private async Task HangUp()
     {
-        await HubConnection.SendAsync("Call", Id, _peerId);
+        await HubConnection.SendAsync("HangUp", Id);
+        await _videoChatModule.InvokeVoidAsync("endCall", _peer);
     }
 
     private async Task InitializeHubConnection()
     {
-        HubConnection.On<int>("PeerJoined", async (connectionId) =>
+        HubConnection.On("CallTerminated", async () =>
         {
-            //TODO: implement logic for adding new peer
-            StateHasChanged();
+            await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            //закрити діалог
         });
-
-        HubConnection.On<int>("PeerLeft", async (connectionId) =>
+        HubConnection.On<string>("CallDeclined", async (userId) =>
         {
-            //TODO: implement logic for removing peer
-            StateHasChanged();
+            await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            //показати снекбар про відхилення дзвінка
+
+            //закрити діалог
+            
         });
     }
 }

@@ -7,6 +7,8 @@
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
 @inject IAccountService AccountService
+@inject ISnackbar Snackbar
+@inject IUserService UserService
 
 <PageTitle>ChatApp.Blazor</PageTitle>
 
@@ -66,6 +68,7 @@
     private HubConnection? HubConnection;
     private AuthenticationState? _authState;
     private string _currentUserId = null!;
+    private Snackbar snackbar;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,9 +78,35 @@
         HubConnection = new HubConnectionBuilder()
         .WithUrl(NavigationManager.ToAbsoluteUri($"{Configuration.GetSection("AppBase").Value}videochathub?userId={_currentUserId}")).Build();
 
-        HubConnection.On<string, string>("IncomingCall", (callId, peerId) =>
+        HubConnection.On<string, string>("IncomingCall", async (callingUserId, peerId) =>
         {
-            NavigationManager.NavigateTo($"/video-chat/{callId}?peerId={peerId}");
+            var user = await UserService.GetUserByIdAsync(callingUserId);
+
+            Snackbar.Configuration.SnackbarVariant = Variant.Outlined;
+            snackbar = Snackbar.Add(
+                @<div>
+                    <h5>@user.UserName is calling</h5>
+                    <ul>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => DeclineCall(callingUserId)">
+                            Decline
+                        </MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="() => AcceptCall(callingUserId, peerId)">
+                            Accept
+                        </MudButton>
+                    </ul>
+                    </div>
+                ,
+                Severity.Normal,
+                options =>
+                {
+                    options.IconColor = Color.Success;
+                    options.SnackbarVariant = Variant.Outlined;
+                    options.Icon = Icons.Material.Filled.PhoneCallback;
+                    options.ShowCloseIcon = false;
+                    options.CloseAfterNavigation = true;
+                    options.VisibleStateDuration = 1000000;
+                }
+            );
         });
 
         if (HubConnection.State == HubConnectionState.Disconnected)
@@ -85,6 +114,19 @@
             await HubConnection.StartAsync();
         }
     }
+
+    private void AcceptCall(string callingUserId, string peerId)
+    {
+        NavigationManager.NavigateTo($"/video-chat/{callingUserId}?peerId={peerId}");
+    }
+
+    private async Task DeclineCall(string callingUserId)
+    {
+        await HubConnection.InvokeAsync("DeclineCall", callingUserId);
+        if (snackbar is null) return;
+        Snackbar.Remove(snackbar);
+    }
+
     private async Task Logout()
     {
         await AccountService.Logout();

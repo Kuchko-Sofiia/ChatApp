@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ChatApp.DTO;
-using System.Security.Claims;
 
 namespace ChatApp.API.Hubs
 {

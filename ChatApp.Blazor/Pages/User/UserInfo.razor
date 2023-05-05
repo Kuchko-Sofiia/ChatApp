@@ -9,6 +9,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
+@inject IJSRuntime jsRuntime
 
 <div class="d-flex justify-content-center">
     <MudCard Style="width: 400px;">
@@ -30,17 +31,17 @@
                         @_userInfo?.Email
                     </MudListItem>
                     <MudDivider DividerType="DividerType.Inset" />
-                    <MudListItem>
-                        <MudIcon Icon="@Icons.Material.Filled.PhoneAndroid" Color="Color.Primary" />
-                        @_userInfo?.PhoneNumber
-                    </MudListItem>
+                    @if(!String.IsNullOrEmpty(_userInfo?.PhoneNumber))
+                    {
+                        <MudListItem>
+                            <MudIcon Icon="@Icons.Material.Filled.PhoneAndroid" Color="Color.Primary" />
+                            @_userInfo?.PhoneNumber
+                        </MudListItem>
+                    }
                 </MudList>
             </MudPaper>
         </MudCardContent>
         <MudCardActions Class="d-flex justify-content-between">
-            <NavLink href="users">
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Back</MudButton>
-            </NavLink>
             @if (_editEnabled)
             {
                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OnEdit())">Edit</MudButton>

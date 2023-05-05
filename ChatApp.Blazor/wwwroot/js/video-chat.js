@@ -1,4 +1,7 @@
-﻿let localPeer;
+﻿let activeCall;
+let localPeer;
+let localStream;
+let remoteStream;
 
 export function setUpPeer() {
     const peer = new Peer();
@@ -11,18 +14,31 @@ export function setUpPeer() {
         peer.on('call', (call) => {
             console.log('incoming call...');
             console.log('Call: ', call);
-            navigator.mediaDevices
+            activeCall = call;
+            console.log('LocalStream: ', localStream);
+            if (localStream) {
+                call.answer(localStream);
+                console.log('Call answered with localStream');
+            }
+            else {
+                navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
-                    call.answer(stream);
-                    console.log('Call answered');
-                    call.on('stream', (remoteStream) => {
-                        setRemoteVideo(getRemoteVideo(), remoteStream);
-                        setLocalVideo(getLocalVideo(), stream);
-                    });
+                    localStream = stream;
+                    call.answer(localStream);
+                    console.log('Call answered with getUserMedia()');
                 }).catch(function (err) {
                     console.log('Failed to get local stream', err);
                 });
+            }
+            call.on('stream', (rStream) => {
+                remoteStream = rStream;
+                setRemoteVideo(getRemoteVideo(), rStream);
+                setLocalVideo(getLocalVideo(), stream);
+            });
+            call.on('close', () => {
+                console.log('Call ended');
+            });
         });
         peer.on('error', (error) => {
             reject(error);
@@ -65,6 +81,7 @@ export function getRemoteVideo() {
 
 export function setLocalVideo(localVideo, stream) {
     localVideo.srcObject = stream;
+    localVideo.audio = false;
     localVideo.play();
 }
 
@@ -75,9 +92,9 @@ export function setRemoteVideo(remoteVideo, stream) {
 
 export async function getLocalStream() {
     console.log('Trying to set up local stream');
-    const localStream = await navigator.mediaDevices.getUserMedia({
+    localStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: false
+        audio: true 
     });
     console.log('Local stream set up:', localStream);
     return localStream;
@@ -98,6 +115,7 @@ export async function callToPeer(stream, remotePeerId) {
 
     // Make the call
     const call = localPeer.call(remotePeerId, stream);
+    activeCall = call;
     call.peerConnection.onconnectionstatechange = function () {
         if (call.peerConnection.connectionState === 'connected') {
             console.log('Call connected');
@@ -119,12 +137,30 @@ export async function callToPeer(stream, remotePeerId) {
     });
 }
 
+export function endCall(peer) {
+    // Close the PeerConnection
+    if (activeCall.peerConnection) {
+        activeCall.peerConnection.close();
+    }
+    // Close the Peer instance
+    if (peer) {
+        peer.destroy();
+    }
+    // Close the local and remote streams
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+    }
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+}
+
 export function subscribePeerToCalls(peer) {
     peer.on('call', (call) => {
         console.log('incoming call...');
         console.log('Call: ', call);
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio: false })
+            .getUserMedia({ video: true, audio: true })
             .then((stream) => {
                 call.answer(stream);
                 console.log('Call answered');
@@ -140,6 +176,7 @@ export function subscribePeerToCalls(peer) {
 export function setLocalStream(stream) {
     const localVideo = document.getElementById('localVideo');
     localVideo.srcObject = stream;
+    localVideo.audio = false;
 }
 
 //export function setRemoteStream(stream) {
