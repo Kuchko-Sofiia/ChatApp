@@ -17,12 +17,14 @@ namespace ChatApp.DAL.Data.Configurations
             builder.HasOne(x => x.Chat)
                    .WithMany(x => x.ChatMembers)
                    .HasForeignKey(x => x.ChatId)
-                   .IsRequired();
+                   .IsRequired()
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.User)
                    .WithMany(x => x.ChatMembers)
                    .HasForeignKey(x => x.UserId)
-                   .IsRequired();
+                   .IsRequired()
+                   .OnDelete(DeleteBehavior.Cascade); ;
         }
     }
 }

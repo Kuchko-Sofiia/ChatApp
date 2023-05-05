@@ -9,5 +9,6 @@ namespace ChatApp.BLL.Services.Interfaces
         public Task CreateChat(Chat newChat, IEnumerable<string> newChatUsers);
         public Task<Chat> GetChatById(int id);
         public Task<PaginatedData<ChatInfo>> GetPaginatedChatsAsync(PaginatedDataStateDTO<ChatSortProperty> tableState);
+        public Task<PaginatedData<ChatInfo>> GetPaginatedChatsByUserIdAsync(PaginatedDataStateDTO<ChatSortProperty> tableState, string userId);
     }
 }

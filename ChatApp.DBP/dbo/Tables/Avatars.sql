@@ -5,8 +5,8 @@
     Content VARCHAR(MAX) NOT NULL,
     UserId NVARCHAR(450) NULL,
     ChatId INT NULL, 
-    CONSTRAINT [FK_Avatars_ToUsers] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers]([Id]),
-    CONSTRAINT [FK_Avatars_ToChats] FOREIGN KEY ([ChatId]) REFERENCES [Chats]([Id]),
+    CONSTRAINT [FK_Avatars_ToUsers] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers]([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Avatars_ToChats] FOREIGN KEY ([ChatId]) REFERENCES [Chats]([Id]) ON DELETE CASCADE,
     CONSTRAINT CHK_Avatar_FK CHECK ([UserId] IS NOT NULL OR ChatId IS NOT NULL), 
     CONSTRAINT [PK_Avatars] PRIMARY KEY ([Id])
 )

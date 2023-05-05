@@ -42,5 +42,18 @@ namespace ChatApp.Blazor.Services
 
             return paginatedData;
         }
+
+        public async Task<PaginatedDataDTO<ChatDTO>> GetChatsByUserIdAsync(PaginatedDataStateDTO<ChatSortProperty> tableState, string userId)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"api/chat/getallchatsbyuser/{userId}", tableState);
+
+            response.EnsureSuccessStatusCode();
+
+            var paginatedData =
+                await response.Content.ReadFromJsonAsync<PaginatedDataDTO<ChatDTO>>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?? new PaginatedDataDTO<ChatDTO>();
+
+            return paginatedData;
+        }
     }
 }

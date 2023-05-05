@@ -24,12 +24,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ChatDTO>> CreateChat([FromBody] ChatDTO chatDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
             var newChat = _mapper.Map<Chat>(chatDTO);
             await _chatService.CreateChat(newChat, chatDTO.MembersId);
 
@@ -46,13 +40,14 @@ namespace ChatApp.API.Controllers
         [HttpPost("getall")]
         public async Task<ActionResult<PaginatedDataDTO<ChatDTO>>> GetAllChats(PaginatedDataStateDTO<ChatSortProperty> tableStateData)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
             var chats = await _chatService.GetPaginatedChatsAsync(tableStateData);
+            return _mapper.Map<PaginatedDataDTO<ChatDTO>>(chats);
+        }
+
+        [HttpPost("getallchatsbyuser/{userId}")]
+        public async Task<ActionResult<PaginatedDataDTO<ChatDTO>>> GetAllChatsByUserId(PaginatedDataStateDTO<ChatSortProperty> tableStateData, string userId)
+        {
+            var chats = await _chatService.GetPaginatedChatsByUserIdAsync(tableStateData, userId);
             return _mapper.Map<PaginatedDataDTO<ChatDTO>>(chats);
         }
     }
