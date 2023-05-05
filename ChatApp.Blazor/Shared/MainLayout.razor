@@ -1,4 +1,5 @@
 ﻿@using ChatApp.Blazor.Helpers;
+@using ChatApp.Blazor.Pages.VideoCall;
 @using ChatApp.Blazor.Services.Interfaces;
 @using System.Security.Claims;
 
@@ -7,8 +8,10 @@
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
 @inject IAccountService AccountService
-@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject IUserService UserService
+@inject ISnackbar Snackbar
+
 
 <PageTitle>ChatApp.Blazor</PageTitle>
 
@@ -90,12 +93,11 @@
                         <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => DeclineCall(callingUserId)">
                             Decline
                         </MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="() => AcceptCall(callingUserId, peerId)">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="() => AcceptCall(callingUserId, peerId)">
                             Accept
                         </MudButton>
                     </ul>
-                    </div>
-                ,
+                </div>,
                 Severity.Normal,
                 options =>
                 {
@@ -115,14 +117,27 @@
         }
     }
 
-    private void AcceptCall(string callingUserId, string peerId)
+    private async Task AcceptCall(string callingUserId, string peerId)
     {
-        NavigationManager.NavigateTo($"/video-chat/{callingUserId}?peerId={peerId}");
+        //NavigationManager.NavigateTo($"/video-chat/{callingUserId}?peerId={peerId}");
+
+        var parameters = new DialogParameters();
+        parameters.Add("Id", callingUserId);
+        parameters.Add("peerId", peerId);
+        parameters.Add("HubConnection", HubConnection);
+        var dialog = await DialogService.ShowAsync<VideoChat>("", parameters, new DialogOptions
+        {
+            DisableBackdropClick = true,
+            MaxWidth = MaxWidth.ExtraLarge
+        });
+        if (snackbar is null) return;
+            Snackbar.Remove(snackbar);
     }
 
     private async Task DeclineCall(string callingUserId)
     {
         await HubConnection.InvokeAsync("DeclineCall", callingUserId);
+
         if (snackbar is null) return;
         Snackbar.Remove(snackbar);
     }

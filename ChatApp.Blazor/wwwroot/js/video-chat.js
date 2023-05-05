@@ -46,6 +46,9 @@ export function setUpPeer() {
     });
 }
 
+export function getLocalPeer() {
+    return localPeer;
+}
 export function getPeerId(peer) {
     return new Promise((resolve, reject) => {
         peer.on('open', (id) => {
@@ -154,6 +157,13 @@ export function endCall(peer) {
         localStream.getTracks().forEach(track => track.stop());
     }
 }
+
+export function closeLocalStream() {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+}
+
 
 export function subscribePeerToCalls(peer) {
     peer.on('call', (call) => {

@@ -28,9 +28,12 @@
 
 @code {
     [Parameter] 
-    public string Id { get; set; }
-    [CascadingParameter(Name = "VideoChatHubConnection")]
+    public string? Id { get; set; }
+    [Parameter]
+    public string? PeerId { get; set; }
+    [Parameter]
     public HubConnection HubConnection { get; set; }
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = null!;
 
@@ -50,10 +53,9 @@
         _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
 
         _videoChatModule = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/video-chat.js");
-
         _peerId = await _videoChatModule.InvokeAsync<string>("setUpPeer");
-        //_peerId = await _videoChatModule.InvokeAsync<string>("getPeerId", _peer);
-        //_peer = await _videoChatModule.InvokeAsync<IJSObjectReference>("subscribePeerToCalls", _peer);
+        _peer = await _videoChatModule.InvokeAsync<IJSObjectReference>("getLocalPeer");
+
         try
         {
             _localStream = await _videoChatModule.InvokeAsync<IJSObjectReference>("getLocalStream");
@@ -63,10 +65,11 @@
         {
             Console.WriteLine(ex.Message);
         }
-        if (QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query).TryGetValue("peerId", out var peerId))
+
+        if (PeerId != null)
         {
-            _peerToCallId = peerId;
-            AnswerCall();
+            _peerToCallId = PeerId;
+            await AnswerCall();
         }
 
         await InitializeHubConnection();
@@ -87,6 +90,7 @@
     {
         await HubConnection.SendAsync("HangUp", Id);
         await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+        MudDialog.Cancel();
     }
 
     private async Task InitializeHubConnection()
@@ -94,13 +98,14 @@
         HubConnection.On("CallTerminated", async () =>
         {
             await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            MudDialog.Cancel();
             //закрити діалог
         });
-        HubConnection.On<string>("CallDeclined", async (userId) =>
+        HubConnection.On("CallDeclined", async () =>
         {
             await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            MudDialog.Cancel();
             //показати снекбар про відхилення дзвінка
-
             //закрити діалог
             
         });

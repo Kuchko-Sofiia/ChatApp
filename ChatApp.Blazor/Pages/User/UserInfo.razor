@@ -2,12 +2,14 @@
 @attribute [Authorize]
 
 @using System.Net.Http.Json
+@using ChatApp.Blazor.Pages.VideoCall;
 @using Microsoft.AspNetCore.WebUtilities;
 @using ChatApp.Blazor.Services.Interfaces;
 @using ChatApp.DTO;
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
 @inject IUserService UserService
 @inject IJSRuntime jsRuntime
 
@@ -55,7 +57,9 @@
 </div>
 
 @code {
-    [CascadingParameter] public HubConnection HubConnection { get; set; }
+    [CascadingParameter(Name = "VideoChatHubConnection")]
+    public HubConnection HubConnection { get; set; }
+
     private UserDTO? _userInfo;
     private bool _editEnabled;
 
@@ -81,6 +85,14 @@
     }
     private async Task Call()
     {
-        NavigationManager.NavigateTo($"/video-chat/{_userInfo.Id}");
+        //NavigationManager.NavigateTo($"/video-chat/{_userInfo.Id}");
+        var parameters = new DialogParameters();
+        parameters.Add("Id", _userInfo.Id);
+        parameters.Add("HubConnection", HubConnection);
+        var dialog = await DialogService.ShowAsync<VideoChat>("", parameters, new DialogOptions
+        {
+            DisableBackdropClick = true,
+            MaxWidth = MaxWidth.ExtraLarge
+        });
     }
 }
