@@ -35,13 +35,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
@@ -61,20 +54,13 @@ namespace ChatApp.API.Controllers
                 });
             }
 
-            return Unauthorized();
+            return Unauthorized("The username or password is incorrect");
         }
 
         [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] SignInDTO signInDto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var user = _mapper.Map<User>(signInDto);
 
             var result = await _userManager.CreateAsync(user, signInDto.Password);
@@ -83,8 +69,6 @@ namespace ChatApp.API.Controllers
             {
                 return BadRequest(result.Errors);
             }
-
-            //await _userManager.AddToRoleAsync(user, RoleConsts.Member);
 
             var token = _jwtTokenService.CreateToken(user);
 
@@ -105,13 +89,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var user = await _userManager.FindByEmailAsync(changePasswordDto.Email);
 
             if (user == null)
@@ -135,13 +112,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthResponseDTO>> RefreshToken(TokenDTO tokenModel)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var principal = _jwtTokenService.GetPrincipalFromExpiredToken(tokenModel.AccessToken);
 
             if (principal == null)

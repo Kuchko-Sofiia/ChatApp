@@ -27,21 +27,14 @@
 <MudButton @onclick="HangUp">Hang up</MudButton>
 
 @code {
-    [Parameter] 
-    public string? Id { get; set; }
-    [Parameter]
-    public string? PeerId { get; set; }
-    [Parameter]
-    public HubConnection HubConnection { get; set; }
-
-    [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
-
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? PeerId { get; set; }
+    [Parameter] public HubConnection HubConnection { get; set; }
+    [CascadingParameter]MudDialogInstance MudDialog { get; set; } = null!;
+    
     private IJSObjectReference _videoChatModule = null!;
     private IJSObjectReference _localStream = null!;
-    private IJSObjectReference _remoteStream = null!;
-    private IJSObjectReference _peer = null!;
-    private string _peerId = null!;
+    private string _currentPeerId = null!;
     private string _peerToCallId = null!;
 
     private AuthenticationState? _authState;
@@ -51,20 +44,12 @@
     {
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _currentUserId = _authState.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value!;
-
         _videoChatModule = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/video-chat.js");
-        _peerId = await _videoChatModule.InvokeAsync<string>("setUpPeer");
-        _peer = await _videoChatModule.InvokeAsync<IJSObjectReference>("getLocalPeer");
 
-        try
-        {
-            _localStream = await _videoChatModule.InvokeAsync<IJSObjectReference>("getLocalStream");
-            await _videoChatModule.InvokeVoidAsync("setLocalStream", _localStream);
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        _currentPeerId = await _videoChatModule.InvokeAsync<string>("createNewPeer");
+        _localStream = await _videoChatModule.InvokeAsync<IJSObjectReference>("setLocalStream");
+
+        await _videoChatModule.InvokeVoidAsync("subscribePeerToCalls");
 
         if (PeerId != null)
         {
@@ -78,7 +63,7 @@
 
     private async Task CallToUser()
     {
-        await HubConnection.SendAsync("Call", _currentUserId, Id, _peerId);
+        await HubConnection.SendAsync("Call", _currentUserId, Id, _currentPeerId);
     }
 
     private async Task AnswerCall()
@@ -89,7 +74,7 @@
     private async Task HangUp()
     {
         await HubConnection.SendAsync("HangUp", Id);
-        await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+        await _videoChatModule.InvokeVoidAsync("endCall");
         MudDialog.Cancel();
     }
 
@@ -97,17 +82,13 @@
     {
         HubConnection.On("CallTerminated", async () =>
         {
-            await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            await _videoChatModule.InvokeVoidAsync("endCall");
             MudDialog.Cancel();
-            //закрити діалог
         });
         HubConnection.On("CallDeclined", async () =>
         {
-            await _videoChatModule.InvokeVoidAsync("endCall", _peer);
+            await _videoChatModule.InvokeVoidAsync("endCall");
             MudDialog.Cancel();
-            //показати снекбар про відхилення дзвінка
-            //закрити діалог
-            
         });
     }
 }

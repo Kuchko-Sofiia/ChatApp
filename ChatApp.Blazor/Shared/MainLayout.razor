@@ -97,7 +97,8 @@
                             Accept
                         </MudButton>
                     </ul>
-                </div>,
+        </div>
+    ,
                 Severity.Normal,
                 options =>
                 {
@@ -115,6 +116,7 @@
         {
             await HubConnection.StartAsync();
         }
+        StateHasChanged();
     }
 
     private async Task AcceptCall(string callingUserId, string peerId)

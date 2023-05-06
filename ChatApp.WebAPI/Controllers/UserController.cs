@@ -31,13 +31,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("getpaginatedusers")]
         public async Task<ActionResult<PaginatedDataDTO<UserDTO>>> GetPaginatedUsers(PaginatedDataStateDTO<UserInfoSortProperty> tableStateData)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var users = await _userService.GetUsersAsync(tableStateData);
             return _mapper.Map<PaginatedDataDTO<UserDTO>>(users);
         }
@@ -45,13 +38,6 @@ namespace ChatApp.API.Controllers
         [HttpPut("edit")]
         public async Task<ActionResult<UserDTO>> Edit(UserDTO userToEdit)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             if (userToEdit.Email != HttpContext.User.Identity.Name)
             {
                 var errors = new Dictionary<string, string>
@@ -72,13 +58,6 @@ namespace ChatApp.API.Controllers
         [HttpPost("avatar/add")]
         public async Task<ActionResult<AvatarDTO>> AddUserAvatar(AvatarDTO newAvatar)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage).ToList();
-                return BadRequest(errors);
-            }
-
             var avatar = _mapper.Map<Avatar>(newAvatar);
             await _userService.AddAvatarAsync(avatar);
             return Ok();
