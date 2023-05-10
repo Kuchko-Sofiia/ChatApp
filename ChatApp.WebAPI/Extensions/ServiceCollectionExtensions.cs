@@ -65,7 +65,6 @@ namespace ChatApp.API.Extensions
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
-            services.AddTransient<IContactsRepository, ContactsRepository>();
             services.AddTransient<IChatMemberRepository, ChatMemberRepository>();
             services.AddTransient<IChatInfoRepository, ChatInfoRepository>();
             services.AddTransient<IAvatarRepository, AvatarRepository>();

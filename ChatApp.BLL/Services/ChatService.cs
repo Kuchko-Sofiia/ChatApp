@@ -10,7 +10,6 @@ namespace ChatApp.BLL.Services
     public class ChatService : IChatService
     {
         private readonly IUnitOfWork _unitOfWork;
-
         public ChatService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

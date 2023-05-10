@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetRoleClaims.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetRoles.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserClaims.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserLogins.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserRoles.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserTokens.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUsers.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Avatars.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/BlockedUsers.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/ChatMembers.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Chats.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/ContactRequest.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Contacts.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Messages.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/__EFMigrationsHistory.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Views/ChatInfo.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Views/UserInfo.sql" dialect="TSQL" />
+  </component>
+</project>

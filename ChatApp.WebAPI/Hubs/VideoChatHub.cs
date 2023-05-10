@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.API.Hubs
 {
+    [Authorize]
     public class VideoChatHub : Hub
     {
         public override async Task OnConnectedAsync()

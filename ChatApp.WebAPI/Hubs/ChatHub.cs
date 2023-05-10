@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ChatApp.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatApp.API.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
         public async Task SendNewMessageAsync(int chatId, MessageDTO message)

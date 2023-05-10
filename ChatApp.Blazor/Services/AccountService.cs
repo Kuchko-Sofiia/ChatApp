@@ -23,10 +23,7 @@ namespace ChatApp.Blazor.Services
             var response = await _httpClient.PostAsJsonAsync("api/account/signin", signInDto);
             if (response.IsSuccessStatusCode)
             {
-                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
-
-                if(authResponse != null)
-                    await _localStorageService.SetJwtTokenInfoAsync(authResponse);
+                await response.Content.ReadFromJsonAsync<AuthResponseDTO>();
             }
         }
 

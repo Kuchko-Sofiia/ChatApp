@@ -2,9 +2,8 @@
 
 namespace ChatApp.DAL.Entities
 {
-    public class ChatMember
+    public class ChatMember : IdentifiableEntity
     {
-        public int Id { get; set; }
         public int ChatId { get; set; }
         public string UserId { get; set; }
         public Chat Chat { get; set; }

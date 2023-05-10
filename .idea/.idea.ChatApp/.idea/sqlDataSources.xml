@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="fde3b361-f719-4968-b76d-ee136f700de6" />
+          <option name="name" value="ChatApp.DBP" />
+          <option name="dbmsName" value="MSSQL" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Chats.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/__EFMigrationsHistory.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetRoles.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUsers.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetRoleClaims.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserClaims.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserLogins.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserRoles.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/AspNetUserTokens.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Contacts.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Messages.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/ContactRequest.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/ChatMembers.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/BlockedUsers.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Tables/Avatars.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Views/ChatInfo.sql" />
+              <option value="file://$PROJECT_DIR$/ChatApp.DBP/dbo/Views/UserInfo.sql" />
+            </array>
+          </option>
+          <option name="remarks" value="Database Project" />
+          <option name="outPath" value="$PROJECT_DIR$/ChatApp.DBP" />
+          <option name="codeStyleName" value="Visual Studio Database Project" />
+          <option name="outLayout" value="File per object by schema.groovy" />
+          <option name="scriptOptions">
+            <map>
+              <entry key="ConstraintContext" value="CONSTRAINT_IN_TABLE" />
+              <entry key="MsVsDdlCompatibility" value="1" />
+              <entry key="QualifyWithSchema" value="ALWAYS" />
+              <entry key="Reformat" value="1" />
+              <entry key="UseSemicolon" value="1" />
+            </map>
+          </option>
+        </State>
+      </list>
+    </option>
+  </component>
+</project>

@@ -18,6 +18,11 @@ namespace ChatApp.BLL.Services
 
         public async Task CreateMessage(Message newMessage)
         {
+            if(newMessage == null)
+            {
+                throw new ArgumentNullException(nameof(newMessage));
+            }
+
             var messageRepository = _unitOfWork.GetRepository<IMessageRepository>();
             messageRepository.Create(newMessage);
 

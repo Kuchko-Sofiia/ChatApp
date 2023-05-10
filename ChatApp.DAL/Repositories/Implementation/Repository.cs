@@ -19,13 +19,20 @@ namespace ChatApp.DAL.Repositories.Realizations
         {
             return await _dbSet.FindAsync(id);
         }
+
         public async Task<T> GetById(int id)
         {
             return await _dbSet.FindAsync(id);
         }
+
         public IQueryable<T> GetAll()
         {
             return _dbSet.AsQueryable();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
         }
 
         public IEnumerable<T> GetAllSorted(Expression<Func<T, object>> orderBy)
@@ -36,16 +43,6 @@ namespace ChatApp.DAL.Repositories.Realizations
         public IEnumerable<T> FindAll(Expression<Func<T, bool>>? predicate = default)
         {
             return predicate != null ? _dbSet.Where(predicate).AsEnumerable() : _dbSet.AsEnumerable();
-        }
-
-        public IEnumerable<T> FindAllWithRelated(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
-        {
-            var query = _dbSet.Where(predicate);
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-            return query.AsEnumerable();
         }
 
         public async void Create(T entity)
@@ -67,11 +64,6 @@ namespace ChatApp.DAL.Repositories.Realizations
         public void Delete(T entity)
         {
             _dbSet.Remove(entity);
-        }
-
-        public void Attach(T entity)
-        {
-            _dbSet.Attach(entity);
         }
     }
 }
