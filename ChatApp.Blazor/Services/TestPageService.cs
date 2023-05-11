@@ -17,9 +17,6 @@ namespace ChatApp.Blazor.Services
         }
         public async Task<string> GetMessageAsync()
         {
-            //var accessToken = await _localStorageService.GetItemAsync<string>("token");
-            //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
             var response = await _httpClient.GetAsync("api/account/test");
 
             if (response.IsSuccessStatusCode)

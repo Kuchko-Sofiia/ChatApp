@@ -76,18 +76,10 @@
     private MudTable<UserDTO>? table;
 
     private string? searchString = null;
-    //private bool _firstRender = true; 
 
     private async Task<TableData<UserDTO>> ServerReload(TableState state)
     {
-        //if (_firstRender)
-        //{
-        //    SetTableStateFromQuery(state);
-        //    _firstRender = false;
-        //}
-
         var paginatedData = await UserService.GetUsersAsync(GetTableState(state));
-        //GenerateUserNavigationUrl(state);
 
         IEnumerable<UserDTO> data = paginatedData.Items;
         _usersList = data;

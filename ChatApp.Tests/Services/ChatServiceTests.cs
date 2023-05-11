@@ -1,7 +1,5 @@
-﻿using NUnit.Framework;
-using ChatApp.BLL.Services;
+﻿using ChatApp.BLL.Services;
 using ChatApp.DAL.UnitOfWork;
-using ChatApp.DTO;
 using ChatApp.DAL.Entities;
 using ChatApp.DAL.Repositories.Interfaces;
 
@@ -37,6 +35,18 @@ namespace ChatApp.NUnitTests.Services
 
             Assert.That(result, Is.EqualTo(chat));
             _chatRepositoryMock.Verify(repo => repo.GetById(chatId), Times.Once);
+        }
+
+        [Test]
+        [TestCase(888)]
+        [TestCase(0)]
+        [TestCase(-36)]
+        public async Task GetChatByNotExistingId_ShouldReturnNull(int notExistingChatId)
+        {
+            var result = await _chatService.GetChatById(notExistingChatId);
+
+            Assert.That(result, Is.Null);
+            _chatRepositoryMock.Verify(repo => repo.GetById(notExistingChatId), Times.Once);
         }
     }
 }

@@ -85,7 +85,6 @@
     }
     private async Task Call()
     {
-        //NavigationManager.NavigateTo($"/video-chat/{_userInfo.Id}");
         var parameters = new DialogParameters();
         parameters.Add("Id", _userInfo.Id);
         parameters.Add("HubConnection", HubConnection);
