@@ -17,10 +17,19 @@ namespace ChatApp.BLL.Services
 
         public async Task CreateChat(Chat newChat, IEnumerable<string> newChatUsers)
         {
-            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
-            chatRepository.Create(newChat);
+            if(newChat == null)
+                throw new ArgumentNullException(nameof(newChat));
 
+            if (newChatUsers == null )
+                throw new ArgumentNullException(nameof(newChatUsers));
+
+            if (!newChatUsers.Any())
+                throw new ArgumentException("The newChatUsers parameter must contain at least one user.", nameof(newChatUsers));
+
+            var chatRepository = _unitOfWork.GetRepository<IChatRepository>();
             var chatMembersRepository = _unitOfWork.GetRepository<IChatMemberRepository>();
+
+            chatRepository.Create(newChat);
 
             await _unitOfWork.SaveChangesAsync();
 

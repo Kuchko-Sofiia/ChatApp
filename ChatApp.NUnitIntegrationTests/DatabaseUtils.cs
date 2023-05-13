@@ -1,48 +1,10 @@
-﻿using ChatApp.DAL.Data;
-using ChatApp.DAL.Entities;
+﻿using ChatApp.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChatApp.NUnitTests
+namespace ChatApp.NUnitIntegrationTests
 {
-    public class InMemoryDBContext
+    public static class DatabaseUtils
     {
-        public static ChatAppDbContext? _chatAppDbContext;
-        public static List<User> FakeUsers => _users;
-        public static List<Message> FakeMessages => _messages;
-        public static List<Avatar> FakeAvatars => _avatars;
-        public static List<Chat> FakeChats => _chats;
-        public static List<ChatMember> FakeChatMembers => _chatMembers;
-
-        public static async Task<ChatAppDbContext> GetChatAppDbContext()
-        {
-            _chatAppDbContext ??= await SetUpDbContextAsync();
-
-            return _chatAppDbContext;
-        }
-
-        public static async Task<ChatAppDbContext> SetUpDbContextAsync()
-        {
-            var options = new DbContextOptionsBuilder<ChatAppDbContext>()
-              .UseInMemoryDatabase(databaseName: new Guid().ToString())
-              .Options;
-
-            var context = new ChatAppDbContext(options);
-
-            return await SeedDbContextDataAsync(context);
-        }
-
-        public static async Task<ChatAppDbContext> SeedDbContextDataAsync(ChatAppDbContext context)
-        {
-            await context.Users.AddRangeAsync(FakeUsers);
-            await context.Messages.AddRangeAsync(FakeMessages); 
-            await context.Avatars.AddRangeAsync(FakeAvatars);
-            await context.Chats.AddRangeAsync(FakeChats);
-            await context.ChatMembers.AddRangeAsync(FakeChatMembers);
-
-            await context.SaveChangesAsync();
-            return context;
-        }
-
         public static List<User> _users = new()
         {
             new User
@@ -182,11 +144,20 @@ namespace ChatApp.NUnitTests
             }
         };
 
+        public static List<Chat> _chats = new()
+        {
+            new Chat { Name = "General", Description = "General chat for everyone", MembersCount = 10 },
+            new Chat { Name = "Marketing", Description = "Marketing department chat", MembersCount = 5 },
+            new Chat { Name = "Engineering", Description = "Engineering department chat", MembersCount = 8 },
+            new Chat { Name = "Sales", Description = "Sales department chat", MembersCount = 3 },
+            new Chat { Name = "Support", Description = "Customer support chat", MembersCount = 7 },
+            new Chat { Name = "Design", Description = "Design department chat", MembersCount = 4 },
+        };
+
         public static List<Message> _messages = new()
         {
             new Message
             {
-                Id = 1,
                 Text = "Hi there, how are you?",
                 ChatId = 1,
                 SenderId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
@@ -195,7 +166,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 2,
                 Text = "I'm doing great, thanks for asking!",
                 ChatId = 1,
                 SenderId = "05786c29-074c-4499-ab29-21b6669c4f2b",
@@ -204,7 +174,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 3,
                 Text = "Did you finish that report?",
                 ChatId = 2,
                 SenderId = "0782e029-6e0f-4dde-98d3-02b11c0cd088",
@@ -213,7 +182,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 4,
                 Text = "Not yet, but I'll get it done today.",
                 ChatId = 2,
                 SenderId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
@@ -222,7 +190,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 5,
                 Text = "Can you pick me up at the airport tomorrow?",
                 ChatId = 3,
                 SenderId = "05786c29-074c-4499-ab29-21b6669c4f2b",
@@ -231,7 +198,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 6,
                 Text = "Sure thing, what time is your flight?",
                 ChatId = 3,
                 SenderId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
@@ -240,7 +206,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 7,
                 Text = "Do you want to grab lunch later?",
                 ChatId = 4,
                 SenderId = "0782e029-6e0f-4dde-98d3-02b11c0cd088",
@@ -249,7 +214,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 8,
                 Text = "Sorry, I have a meeting then.",
                 ChatId = 4,
                 SenderId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
@@ -258,7 +222,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 9,
                 Text = "Can you help me move this weekend?",
                 ChatId = 5,
                 SenderId = "153f78cf-fa5b-482f-98da-bf912c19869e",
@@ -267,7 +230,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 10,
                 Text = "I'd love to, but I'm out of town.",
                 ChatId = 5,
                 SenderId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
@@ -276,7 +238,6 @@ namespace ChatApp.NUnitTests
             },
             new Message
             {
-                Id = 11,
                 Text = "What did you think of the movie?",
                 ChatId = 6,
                 SenderId = "05786c29-074c-4499-ab29-21b6669c4f2b",
@@ -289,7 +250,6 @@ namespace ChatApp.NUnitTests
         {
             new Avatar
             {
-                Id = 1,
                 ChatId = 1,
                 UserId = null,
                 FileName = "file",
@@ -298,7 +258,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 2,
                 ChatId = 2,
                 UserId = null,
                 FileName = "file",
@@ -307,7 +266,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 3,
                 ChatId = 2,
                 UserId = null,
                 FileName = "file",
@@ -316,7 +274,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 4,
                 ChatId = null,
                 UserId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
                 FileName = "file",
@@ -325,7 +282,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 5,
                 ChatId = null,
                 UserId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6",
                 FileName = "file",
@@ -334,7 +290,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 6,
                 ChatId = null,
                 UserId = "05786c29-074c-4499-ab29-21b6669c4f2b",
                 FileName = "file",
@@ -343,7 +298,6 @@ namespace ChatApp.NUnitTests
             },
             new Avatar
             {
-                Id = 7,
                 ChatId = null,
                 UserId = "0782e029-6e0f-4dde-98d3-02b11c0cd088",
                 FileName = "file",
@@ -352,36 +306,65 @@ namespace ChatApp.NUnitTests
             },
         };
 
-        public static List<Chat> _chats = new()
-        {
-            new Chat { Id = 1, Name = "General", Description = "General chat for everyone", MembersCount = 10 },
-            new Chat { Id = 2, Name = "Marketing", Description = "Marketing department chat", MembersCount = 5 },
-            new Chat { Id = 3, Name = "Engineering", Description = "Engineering department chat", MembersCount = 8 },
-            new Chat { Id = 4, Name = "Sales", Description = "Sales department chat", MembersCount = 3 },
-            new Chat { Id = 5, Name = "Support", Description = "Customer support chat", MembersCount = 7 },
-            new Chat { Id = 6, Name = "Design", Description = "Design department chat", MembersCount = 4 },
-        };
-
-        public static List<ChatInfo> _chatInfos = new()
-        {
-            new ChatInfo { ChatId = 1, Name = "General", Description = "General chat for everyone", MembersCount = 10 },
-            new ChatInfo { ChatId = 2, Name = "Marketing", Description = "Marketing department chat", MembersCount = 5 },
-            new ChatInfo { ChatId = 3, Name = "Engineering", Description = "Engineering department chat", MembersCount = 8 },
-            new ChatInfo { ChatId = 4, Name = "Sales", Description = "Sales department chat", MembersCount = 3 },
-            new ChatInfo { ChatId = 5, Name = "Support", Description = "Customer support chat", MembersCount = 7 },
-            new ChatInfo { ChatId = 6, Name = "Design", Description = "Design department chat", MembersCount = 4 },
-        };
-
         public static List<ChatMember> _chatMembers = new()
         {
-            new ChatMember { Id = 1, ChatId = 1, UserId = "user1" },
-            new ChatMember { Id = 2, ChatId = 1, UserId = "user2" },
-            new ChatMember { Id = 3, ChatId = 1, UserId = "user3" },
-            new ChatMember { Id = 4, ChatId = 2, UserId = "user2" },
-            new ChatMember { Id = 5, ChatId = 2, UserId = "user4" },
-            new ChatMember { Id = 6, ChatId = 3, UserId = "user1" },
-            new ChatMember { Id = 7, ChatId = 3, UserId = "user5" },
-            new ChatMember { Id = 8, ChatId = 3, UserId = "user6" }
+            new ChatMember { ChatId = 1, UserId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6" },
+            new ChatMember { ChatId = 1, UserId = "05786c29-074c-4499-ab29-21b6669c4f2b" },
+            new ChatMember { ChatId = 1, UserId = "0782e029-6e0f-4dde-98d3-02b11c0cd088" },
+            new ChatMember { ChatId = 2, UserId = "05786c29-074c-4499-ab29-21b6669c4f2b" },
+            new ChatMember { ChatId = 2, UserId = "153f78cf-fa5b-482f-98da-bf912c19869e" },
+            new ChatMember { ChatId = 3, UserId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6" },
+            new ChatMember { ChatId = 3, UserId = "17163417-86c3-4eaa-b429-986842b224b4" },
+            new ChatMember { ChatId = 3, UserId = "02889dcc-31a8-4457-a08b-8ae2c0ffdec6" }
         };
+
+        public static async Task PopulateDatabase(DbContext dbContext)
+        {
+            dbContext.AddRange(_users);
+            dbContext.AddRange(_chats);
+            await dbContext.SaveChangesAsync();
+
+            dbContext.AddRange(_messages);
+            dbContext.AddRange(_chatMembers);
+            dbContext.AddRange(_avatars);
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public static async Task ResetIdentityForAllTables(DbContext dbContext)
+        {
+            await dbContext.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT('Chats', RESEED, 0); " +
+                                                        "DBCC CHECKIDENT('Messages', RESEED, 0); " +
+                                                        "DBCC CHECKIDENT('ChatMembers', RESEED, 0); " +
+                                                        "DBCC CHECKIDENT('Avatars', RESEED, 0);");
+        }
+
+        public static void DetachAllEntities(DbContext dbContext)
+        {
+            dbContext.ChangeTracker.Clear();
+        }
+
+        public static async Task ClearDatabase(DbContext dbContext)
+        {
+            List<string> tablesToDelete = new()
+            {
+                "AspNetUsers",
+                "AspNetRoles",
+                "AspNetUserRoles",
+                "AspNetUserLogins",
+                "AspNetUserTokens",
+                "AspNetUserClaims",
+                "AspNetRoleClaims",
+                "Chats",
+                "Messages",
+                "ChatMembers",
+                "Avatars"
+            };
+
+            foreach(string table in tablesToDelete)
+            {
+                await dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [{table}]");
+            }
+        }
     }
 }
