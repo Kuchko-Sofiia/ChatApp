@@ -320,8 +320,8 @@ namespace ChatApp.NUnitIntegrationTests
 
         public static async Task PopulateDatabase(DbContext dbContext)
         {
-            dbContext.AddRange(_users);
-            dbContext.AddRange(_chats);
+            await dbContext.AddRangeAsync(_users);
+            await dbContext.AddRangeAsync(_chats);
             await dbContext.SaveChangesAsync();
 
             dbContext.AddRange(_messages);
@@ -363,7 +363,7 @@ namespace ChatApp.NUnitIntegrationTests
 
             foreach(string table in tablesToDelete)
             {
-                await dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM [{table}]");
+                await dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM {table}");
             }
         }
     }

@@ -26,6 +26,7 @@ namespace ChatApp.NUnitIntegrationTests
         {
             await DatabaseUtils.ClearDatabase(_dbContext);
             await DatabaseUtils.ResetIdentityForAllTables(_dbContext);
+            await DatabaseUtils.PopulateDatabase(_dbContext);
         }
 
         [TearDown]

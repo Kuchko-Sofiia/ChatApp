@@ -134,7 +134,6 @@ namespace ChatApp.NUnitIntegrationTests.Services
             int expectedTotalItems)
         {
             // Arrange
-            DatabaseUtils.PopulateDatabase(_dbContext);
 
             var tableState = new PaginatedDataStateDTO<ChatSortProperty>
             {
@@ -169,7 +168,6 @@ namespace ChatApp.NUnitIntegrationTests.Services
             string userId)
         {
             // Arrange
-            DatabaseUtils.PopulateDatabase(_dbContext);
 
             var tableState = new PaginatedDataStateDTO<ChatSortProperty>
             {
